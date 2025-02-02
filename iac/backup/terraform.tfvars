@@ -1,0 +1,5 @@
+state_bucket_name  = "oscar-tf-state"
+backup_bucket_name = "restic-backups-oscar"
+table_name         = "terraform-remote-state-dynamo"
+profile            = "oscar-lab"
+region             = "eu-west-2"
