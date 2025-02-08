@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: oscar-runner
+    runs-on: oscar-runnner
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
