@@ -1,0 +1,26 @@
+name: Deploy Systemd Service
+
+on:
+  push:
+    branches:
+      - main  # Adjust branch as needed
+
+jobs:
+  deploy:
+    runs-on: oscar-runner
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Deploy systemd service
+        run: |
+          cp ./services/*.service /home/oscar/.config/systemd/user/
+          cp ./services/*.timer /home/oscar/.config/systemd/user/
+          systemctl --user daemon-reload
+          for file in ./services/*.timer; do
+            echo "$file"
+            sudo --user start $file 
+            sudo --user enable $file
+
+          done
+
+          systemctl --user list-timers --all

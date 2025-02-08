@@ -1,0 +1,6 @@
+state_bucket_name = "oscar-tf-state"
+table_name        = "terraform-remote-state-dynamo"
+profile           = "oscar-lab"
+region            = "eu-west-2"
+zoneid            = "Z05080821D3KFPK0X4CL1"
+user              = "traefik"

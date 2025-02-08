@@ -1,0 +1,39 @@
+#!/bin/bash
+# Author: Oscar
+# Date: date +%Y-%m-%d
+# Description: Backup script for my server
+source .env
+
+check() {
+  if [[ $? -ne 0 ]]; then
+    curl -d $1 https://ntfy.oscarcorner.com/backups-oscar
+
+    echo ""
+    echo -e "\e[32mSomething went wrong \e[0m"
+    echo -e "\e[32m '$1' \e[0m"
+    echo ""
+    exit
+  fi
+
+}
+
+echo -e "\e[31mStarting backup script \e[0m"
+echo ""
+echo ""
+restic backup /mnt/main/media/music/ /mnt/nfs/backup/ \
+  --exclude-file /mnt/nfs/backup/.Trash-1000/*/** \
+  --compression max --cleanup-cache \
+  --exclude-caches
+check "Something went wrong backing up the server"
+restic forget --keep-daily 7 --keep-monthly 1 --prune
+check "Something went wrong pruning the server"
+
+restic check --read-data-subset=1G
+check "Something went wrong checking the backups"
+
+curl -d "Backup ran succsefully" https://ntfy.oscarcorner.com/backups-oscar
+
+date=$(date +%Y-%m-%d)
+echo -e "\e[31m backup script run succsefully at '$date'  \e[0m"
+echo ""
+echo ""
