@@ -1,0 +1,291 @@
+%YAML 1.1
+---
+# Define reusable blocks
+x-common-env: &common-environment
+  - PUID=${PUID}
+  - PGID=${PGID}
+  - TZ=${TZ}
+
+x-common-restart: &common-restart
+  restart: unless-stopped
+
+x-reverse-proxy-network: &reverse-proxy-network
+  networks:
+    - reverse-proxy-network
+
+x-common-path: &common-paths
+  - /mnt/main/downloads/torrent:/downloads/torrent
+  - /mnt/main/downloads/usenet:/downloads/usenet # optional
+
+services:
+  gluetun:
+    cap_add:
+      - NET_ADMIN
+    container_name: gluetun
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    environment:
+      - TZ=Europe/London
+      - VPN_SERVICE_PROVIDER=airvpn
+      - VPN_TYPE=wireguard
+      - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
+      - WIREGUARD_PRESHARED_KEY=${WIREGUARD_PRESHARED_KEY}
+      - FIREWALL_VPN_INPUT_PORTS=6147
+      - WIREGUARD_ADDRESSES=10.145.70.146/32
+    image: qmcgaw/gluetun:latest
+    networks:
+      - reverse-proxy-network
+    ports:
+      - '8080:8080'
+      - 6881:6881/udp
+      - 6881:6881/tcp
+    restart: unless-stopped
+  qbittorrent:
+    image: linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    depends_on:
+      - gluetun
+    environment: *common-environment
+    network_mode: service:gluetun
+    <<: *common-restart
+    volumes:
+      - ./configs/qbittorrent:/config
+      - /mnt/main/downloads/torrent:/downloads/torrent
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    environment: *common-environment
+    <<: [*reverse-proxy-network, *common-restart]
+    ports:
+      - 7878:7878
+    volumes:
+      - ./configs/radarr:/config
+      - /mnt/main/media/movies:/movies # optional
+      - /mnt/main/downloads/torrent:/downloads/torrent
+      - /mnt/main/downloads/usenet:/downloads/usenet # optional
+    labels:
+      traefik.enable: true
+      # increase readingTimeouts for the entrypoint used here
+      traefik.http.routers.radarr.entrypoints: websecure
+      traefik.http.routers.radarr.rule: Host(`radarr.oscarcorner.com`)
+      traefik.http.services.radarr.loadbalancer.server.port: 7878
+      traefik.http.routers.radarr.tls.certresolver: route53
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    environment: *common-environment
+    <<: [*reverse-proxy-network, *common-restart]
+    ports:
+      - 9696:9696
+    volumes:
+      - ./configs/prowlarr:/config
+    labels:
+      traefik.enable: true
+      # increase readingTimeouts for the entrypoint used here
+      traefik.http.routers.prowlarr.entrypoints: websecure
+      traefik.http.routers.prowlarr.rule: Host(`prowlarr.oscarcorner.com`)
+      traefik.http.services.prowlarr.loadbalancer.server.port: 9696
+      traefik.http.routers.prowlarr.tls.certresolver: route53
+
+
+  sabnzbd:
+    image: lscr.io/linuxserver/sabnzbd:latest
+    container_name: sabnzbd
+    environment: *common-environment
+    <<: [*reverse-proxy-network, *common-restart]
+    ports:
+      - 8081:8080
+    labels:
+      traefik.enable: true
+      # increase readingTimeouts for the entrypoint used here
+      traefik.http.routers.sabnzbd.entrypoints: websecure
+      traefik.http.routers.sabnzbd.rule: Host(`sabnzbd.oscarcorner.com`)
+      traefik.http.services.sabnzbd.loadbalancer.server.port: 8080
+      traefik.http.routers.sabnzbd.tls.certresolver: route53
+
+    volumes:
+      - ./configs/sabnzbd:/config
+      - /mnt/main/downloads/usenet:/downloads/usenet
+      - /mnt/main/downloads/incomplete:/incomplete-downloads
+
+  sonarr-anime:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr-anime
+    environment: *common-environment
+    <<: [*reverse-proxy-network, *common-restart]
+    ports:
+      - 8990:8989
+    labels:
+      traefik.enable: true
+      # increase readingTimeouts for the entrypoint used here
+      traefik.http.routers.sonarr-anime.entrypoints: websecure
+      traefik.http.routers.sonarr-anime.rule: Host(`sonarr-anime.oscarcorner.com`)
+      traefik.http.services.sonarr-anime.loadbalancer.server.port: 8989
+      traefik.http.routers.sonarr-anime.tls.certresolver: route53
+
+    volumes:
+      - ./configs/sonarr-anime:/config
+      - /mnt/main/media/shows/anime:/tv
+      - /mnt/main/downloads/torrent:/downloads/torrent
+      - /mnt/main/downloads/usenet:/downloads/usenet # optional
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    environment: *common-environment
+    <<: [*reverse-proxy-network, *common-restart]
+    ports:
+      - 8989:8989
+    labels:
+      traefik.enable: true
+      # increase readingTimeouts for the entrypoint used here
+      traefik.http.routers.sonarr.entrypoints: websecure
+      traefik.http.routers.sonarr.rule: Host(`sonarr.oscarcorner.com`)
+      traefik.http.services.sonarr.loadbalancer.server.port: 8989
+      traefik.http.routers.sonarr.tls.certresolver: route53
+
+    volumes:
+
+      - ./configs/sonarr:/config
+      - /mnt/main/media/shows:/tv
+      - /mnt/main/downloads/torrent:/downloads/torrent
+      - /mnt/main/downloads/usenet:/downloads/usenet # optional
+  calibre:
+    image: lscr.io/linuxserver/calibre:latest
+    container_name: calibre
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - CLI_ARGS=-auth-mode=basic # optional
+    <<: [*reverse-proxy-network, *common-restart]
+    ports:
+      - 8083:8080
+    labels:
+      traefik.enable: true
+      # increase readingTimeouts for the entrypoint used here
+      traefik.http.routers.calibre.entrypoints: websecure
+      traefik.http.routers.calibre.rule: Host(`calibre.oscarcorner.com`)
+      traefik.http.services.calibre.loadbalancer.server.port: 8080
+      traefik.http.routers.calibre.tls.certresolver: route53
+
+    volumes:
+      - ./configs/calibre:/config
+      - /mnt/main/media/books:/books
+
+  readarr:
+    image: lscr.io/linuxserver/readarr:develop
+    container_name: readarr
+    environment: *common-environment
+    <<: [*reverse-proxy-network, *common-restart]
+    ports:
+      - 8787:8787
+    labels:
+      traefik.enable: true
+      # increase readingTimeouts for the entrypoint used here
+      traefik.http.routers.readarr.entrypoints: websecure
+      traefik.http.routers.readarr.rule: Host(`readarr.oscarcorner.com`)
+      traefik.http.services.readarr.loadbalancer.server.port: 8787
+      traefik.http.routers.readarr.tls.certresolver: route53
+
+    volumes:
+      - ./configs/readarr:/config
+      - /mnt/main/media/books:/books
+      - /mnt/main/downloads/torrent:/downloads/torrent
+      - /mnt/main/downloads/usenet:/downloads/usenet # optional
+
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    environment: *common-environment
+    <<: [*reverse-proxy-network, *common-restart]
+    ports:
+      - 6767:6767
+    volumes:
+      - ./configs/bazarr:/config
+      - /mnt/main/media/movies:/movies
+      - /mnt/main/media/shows/anime:/tv
+    labels:
+      traefik.enable: true
+      # increase readingTimeouts for the entrypoint used here
+      traefik.http.routers.bazarr.entrypoints: websecure
+      traefik.http.routers.bazarr.rule: Host(`bazarr.oscarcorner.com`)
+      traefik.http.services.bazarr.loadbalancer.server.port: 6767
+      traefik.http.routers.bazarr.tls.certresolver: route53
+
+  lidarr:
+    image: lscr.io/linuxserver/lidarr:latest
+    container_name: lidarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    labels:
+      traefik.enable: true
+      # increase readingTimeouts for the entrypoint used here
+      traefik.http.routers.lidarr.entrypoints: websecure
+      traefik.http.routers.lidarr.rule: Host(`lidarr.oscarcorner.com`)
+      traefik.http.services.lidarr.loadbalancer.server.port: 8686
+      traefik.http.routers.lidarr.tls.certresolver: route53
+
+    volumes:
+      - ./configs/lidarr:/config
+      - /mnt/main/media/music:/music #optional
+      - /mnt/main/downloads/torrent:/downloads/torrent
+      - /mnt/main/downloads/usenet:/downloads/usenet # optional
+    ports:
+      - 8686:8686
+    restart: unless-stopped
+
+  navidrome:
+    image: deluan/navidrome:latest
+    user: 1000:1000 # should be owner of volumes
+    container_name: navidrome
+    ports:
+      - "4533:4533"
+    restart: unless-stopped
+    labels:
+      traefik.enable: true
+      # increase readingTimeouts for the entrypoint used here
+      traefik.http.routers.navidrome.entrypoints: websecure
+      traefik.http.routers.navidrome.rule: Host(`navidrome.oscarcorner.com`)
+      traefik.http.services.navidrome.loadbalancer.server.port: 4533
+      traefik.http.routers.navidrome.tls.certresolver: route53
+
+    environment:
+      ND_SCANSCHEDULE: 1h
+      ND_LOGLEVEL: info
+      ND_SESSIONTIMEOUT: 24h
+      ND_BASEURL: ""
+    volumes:
+      - "./configs/navidrome:/data"
+      - "/mnt/main/media/music:/music:ro"
+  slskd:
+    environment:
+      - SLSKD_REMOTE_CONFIGURATION=true
+    ports:
+      - 5030:5030/tcp
+      - 5031:5031/tcp
+      - 50300:50300/tcp
+    labels:
+      traefik.enable: true
+      # increase readingTimeouts for the entrypoint used here
+      traefik.http.routers.slskd.entrypoints: websecure
+      traefik.http.routers.slskd.rule: Host(`slskd.oscarcorner.com`)
+      traefik.http.services.slskd.loadbalancer.server.port: 5030
+      traefik.http.routers.slskd.tls.certresolver: route53
+    volumes:
+
+      - ./configs/slskd:/app:rw
+      - /mnt/main/media/music:/music:rw
+      - /mnt/main/media/books:/books:ro
+    user: 1000:1000
+    image: slskd/slskd:latest
+
+# Network definitions
+networks:
+  reverse-proxy-network:
+    external: true
+

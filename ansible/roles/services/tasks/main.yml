@@ -1,0 +1,34 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for services
+#
+- name: Ensure systemd user directory exists
+  file:
+    path: "{{ systemd_path }}"
+    state: directory
+    mode: '0755'
+- name: copy scripts
+  copy:
+    src: "scripts/"
+    dest: "{{ user_home }}/"
+
+- name: Copy all systemd service and timer files
+  copy:
+    src: "services/"
+    dest: "{{ systemd_path }}/"
+    mode: '0644'
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+- name: Find all systemd timer files
+  find:
+    paths: "{{ systemd_path }}"
+    patterns: "*.timer"
+  register: timer_files
+- name: Enable and start all timers
+  systemd:
+    name: "{{ item.path | basename }}"
+    scope: user
+    enabled: yes
+    state: started
+  loop: "{{ timer_files.files }}"
+

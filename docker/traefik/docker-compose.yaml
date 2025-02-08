@@ -8,7 +8,7 @@ services:
     env_file:
       - .env # store other secrets e.g., dashboard password
     networks:
-       reverse-proxy-network:
+      - reverse-proxy-network
     ports:
       - 80:80
       - 443:443
@@ -19,10 +19,10 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./letsencrypt:/letsencrypt
       - ./config/traefik.yaml:/traefik.yaml:ro
-      - ./config/acme.json:/acme.json
       - ./config.yaml:/config.yaml:ro
-      - ./config/logs:/var/log/traefik
+      - /home/oscar/traefik/config/logs:/var/log/traefik
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.traefik.entrypoints=http"
@@ -31,7 +31,7 @@ services:
       - "traefik.http.middlewares.traefik-https-redirect.redirectscheme.scheme=https"
       - "traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https"
       - "traefik.http.routers.traefik.middlewares=traefik-https-redirect"
-      - "traefik.http.routers.traefik-secure.entrypoints=https"
+      - "traefik.http.routers.traefik-secure.entrypoints=websecure"
       - "traefik.http.routers.traefik-secure.rule=Host(`traefik-docker.oscarcorner.com`)"
       - "traefik.http.routers.traefik-secure.middlewares=traefik-auth"
       - "traefik.http.routers.traefik-secure.tls=true"

@@ -1,0 +1,18 @@
+{
+  "Comment": "Update DDNS record",
+  "Changes": [
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "wireguard.oscarcorner.com",
+        "Type": "A",
+        "TTL": 300,
+        "ResourceRecords": [
+          {
+            "Value": "92.237.99.228"
+          }
+        ]
+      }
+    }
+  ]
+}

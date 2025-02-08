@@ -1,0 +1,7 @@
+#SPDX-License-Identifier: MIT-0
+---
+# vars file for services
+user_home: "/home/oscar"
+systemd_path: "/home/oscar/.config/systemd/user"
+ansible_user: "oscar"
+
