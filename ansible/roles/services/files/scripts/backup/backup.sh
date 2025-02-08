@@ -21,6 +21,7 @@ echo -e "\e[32mStarting backup script \e[0m"
 echo ""
 echo ""
 restic backup /mnt/main/media/music/ \
+  /home/oscar/jellyfin/config \
   /home/oscar/qbittorrent/configs \
   /mnt/nfs/backup/ \
   --exclude-file /mnt/nfs/backup/.Trash-1000/*/** \
