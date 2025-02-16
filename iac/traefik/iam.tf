@@ -16,6 +16,12 @@ data "aws_iam_policy_document" "this" {
 
   statement {
     effect    = "Allow"
+    actions   = ["route53:ListHostedZonesByName", "route53:ListHostedZones"]
+    resources = ["*"]
+  }
+
+  statement {
+    effect    = "Allow"
     actions   = ["route53:ListHostedZonesByName"]
     resources = ["*"]
   }

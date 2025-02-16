@@ -2,7 +2,8 @@
 # Author: Oscar
 # Date: date +%Y-%m-%d
 # Description: Backup script for my server
-source .env
+
+source /home/oscar/backup/.env
 
 check() {
   if [[ $? -ne 0 ]]; then
@@ -37,6 +38,6 @@ check "Something went wrong checking the backups"
 curl -d "Backup ran succsefully" https://ntfy.oscarcorner.com/backups-oscar
 
 date=$(date +%Y-%m-%d)
-echo -e "\e[31m backup script run succsefully at '$date'  \e[0m"
+echo -e "\e[32m backup script run succsefully at '$date'  \e[0m"
 echo ""
 echo ""

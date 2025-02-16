@@ -1,0 +1,106 @@
+
+networks:
+  monitoring:
+    driver: bridge
+  reverse-proxy-network:
+    external: true
+volumes:
+  prometheus_data: {}
+  grafana_storage: {}
+services:
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    restart: unless-stopped
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    expose:
+      - 9100
+    networks:
+      - monitoring
+
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: unless-stopped
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    labels:
+      traefik.enable: true
+      # increase readingTimeouts for the entrypoint used here
+      traefik.http.routers.prometheus.entrypoints: websecure
+      traefik.http.routers.prometheus.rule: Host(`prometheus.oscarcorner.com`)
+      traefik.http.services.prometheus.loadbalancer.server.port: 9090
+      traefik.http.routers.prometheus.tls.certresolver: route53
+      traefik.docker.network: reverse-proxy-network
+
+    expose:
+      - 9090
+    networks:
+      - monitoring
+      - reverse-proxy-network
+  cadvisor:
+    container_name: cadvisor
+    image: gcr.io/cadvisor/cadvisor:latest
+    volumes: 
+      - "/:/rootfs"
+      - "/var/run:/var/run"
+      - "/sys:/sys"
+      - "/var/lib/docker/:/var/lib/docker"
+      - "/dev/disk/:/dev/disk"
+    privileged: true
+    networks:
+      - monitoring
+    devices: 
+      - "/dev/kmsg"
+  grafana:
+    image: grafana/grafana
+    environment: 
+      - GF_SERVER_ROOT_URL=https://grafana.oscarcorner.com/
+    labels:
+      traefik.enable: true
+      # increase readingTimeouts for the entrypoint used here
+      traefik.http.routers.grafana.entrypoints: websecure
+      traefik.http.routers.grafana.rule: Host(`grafana.oscarcorner.com`)
+      traefik.http.services.grafana.loadbalancer.server.port: 3000
+      traefik.http.routers.grafana.tls.certresolver: route53
+      traefik.docker.network: reverse-proxy-network
+    volumes:
+     - 'grafana_storage:/var/lib/grafana'
+    networks:
+      - monitoring
+      - reverse-proxy-network
+  dcgm-exporter:
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities:
+                - gpu
+    cap_add:
+        - SYS_ADMIN
+    ports:
+        - 9400:9400
+    image: nvcr.io/nvidia/k8s/dcgm-exporter
+    networks:
+      - monitoring
+
+
+

@@ -155,10 +155,11 @@ services:
   calibre:
     image: lscr.io/linuxserver/calibre:latest
     container_name: calibre
-    environment:
+    environment: 
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TZ}
+
       - CLI_ARGS=-auth-mode=basic # optional
     <<: [*reverse-proxy-network, *common-restart]
     ports:
@@ -173,8 +174,23 @@ services:
 
     volumes:
       - ./configs/calibre:/config
+      - ./configs/calibre-books:/oscar-lib
       - /mnt/main/media/books:/books
-
+  calibre-web:
+    image: lscr.io/linuxserver/calibre-web:latest
+    container_name: calibre-web
+    environment: *common-environment
+    <<: [*reverse-proxy-network, *common-restart]
+    volumes:
+      - /mnt/main/media/books:/books
+      - ./configs/calibre-web/data:/config
+    labels:
+      traefik.enable: true
+      # increase readingTimeouts for the entrypoint used here
+      traefik.http.routers.calibre-web.entrypoints: websecure
+      traefik.http.routers.calibre-web.rule: Host(`calibre-web.oscarcorner.com`)
+      traefik.http.services.calibre-web.loadbalancer.server.port: 8083
+      traefik.http.routers.calibre-web.tls.certresolver: route53
   readarr:
     image: lscr.io/linuxserver/readarr:develop
     container_name: readarr
@@ -218,10 +234,8 @@ services:
   lidarr:
     image: lscr.io/linuxserver/lidarr:latest
     container_name: lidarr
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Etc/UTC
+    <<: [*reverse-proxy-network, *common-restart]
+    environment: *common-environment 
     labels:
       traefik.enable: true
       # increase readingTimeouts for the entrypoint used here
@@ -237,15 +251,13 @@ services:
       - /mnt/main/downloads/usenet:/downloads/usenet # optional
     ports:
       - 8686:8686
-    restart: unless-stopped
-
   navidrome:
     image: deluan/navidrome:latest
     user: 1000:1000 # should be owner of volumes
     container_name: navidrome
     ports:
       - "4533:4533"
-    restart: unless-stopped
+    <<: [*reverse-proxy-network, *common-restart]
     labels:
       traefik.enable: true
       # increase readingTimeouts for the entrypoint used here
@@ -253,12 +265,11 @@ services:
       traefik.http.routers.navidrome.rule: Host(`navidrome.oscarcorner.com`)
       traefik.http.services.navidrome.loadbalancer.server.port: 4533
       traefik.http.routers.navidrome.tls.certresolver: route53
-
     environment:
       ND_SCANSCHEDULE: 1h
       ND_LOGLEVEL: info
       ND_SESSIONTIMEOUT: 24h
-      ND_BASEURL: ""
+      ND_BASEURL: "https://navidrome.oscarcorner.com"
     volumes:
       - "./configs/navidrome:/data"
       - "/mnt/main/media/music:/music:ro"

@@ -19,6 +19,10 @@
     mode: '0644'
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
+- name: Run systemctl daemon reload
+  systemd:
+    daemon_reload: true
+    scope: user
 - name: Find all systemd timer files
   find:
     paths: "{{ systemd_path }}"

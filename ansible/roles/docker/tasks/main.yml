@@ -10,6 +10,11 @@
     recurse: no
     file_type: directory
   register: local_docker_compose
+- name: Makes sure all docker dirs exisxts
+  file:
+    path: "{{ (item.path | split('/'))[5] }}"
+    state: directory
+  loop: "{{ local_docker_compose.files }}"
 - name: Copy all docker files to remote
   copy:
     src: "{{ item.path }}/docker-compose.yaml"
