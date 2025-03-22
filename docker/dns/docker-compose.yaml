@@ -1,0 +1,63 @@
+volumes:
+  pihole:
+  dnsmasq:
+
+services:
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    ports:
+      - '53:53/tcp'
+      - '53:53/udp'
+    networks:
+      - default
+      - reverse-proxy-network
+    environment:
+      TZ: 'Europe/London'
+    # Set a password to access the web interface. Not setting one will result in a random password being assigned
+      FTLCONF_webserver_api_password: 'correct horse battery staple'
+      # If using Docker's default `bridge` network setting the dns listening mode should be set to 'all'3
+      FTLCONF_dns_listeningMode: 'all'
+      PIHOLE_DNS_: 172.21.200.3#53
+    labels:
+      traefik.enable: true
+      # increase readingTimeouts for the entrypoint used here
+      traefik.http.routers.pihole.entrypoints: websecure
+      traefik.http.routers.pihole.rule: Host(`pihole.oscarcorner.com`)
+      traefik.http.services.pihole.loadbalancer.server.port: 80
+      traefik.http.routers.pihole.tls.certresolver: route53
+      traefik.http.routers.pihole.tls: true
+      treafik.http.routers.pihole.service: pihole
+      traefik.docker.network: reverse-proxy-network
+
+    volumes:
+      - 'pihole:/etc/pihole'
+      - 'dnsmasq:/etc/dnsmasq.d'
+    restart: unless-stopped
+
+  unbound:
+    image: mvance/unbound
+    networks:
+      default:
+        ipv4_address: 172.21.200.3 # <-- this is used by pihole as upstream DNS
+    ports:
+    - "5335:53/tcp" # expose a different port (5335) so you can use it directly
+    - "5335:53/udp"
+    volumes:
+      - "./dns/forward-records.conf:/opt/unbound/etc/unbound/forward-records.conf"
+      - "./dns/a-records.conf:/opt/unbound/etc/unbound/a-records.conf"
+
+    restart: unless-stopped
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.21.200.0/24
+          gateway: 172.21.200.1
+          ip_range: 172.21.200.0/24
+  reverse-proxy-network:
+    external: true
+

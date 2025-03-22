@@ -55,8 +55,13 @@ services:
       - monitoring
       - reverse-proxy-network
   cadvisor:
+
     container_name: cadvisor
     image: gcr.io/cadvisor/cadvisor:latest
+    command: 
+      - '-housekeeping_interval=10s'
+      - '-docker_only=true'
+      - 'store_container_labels=false'
     volumes: 
       - "/:/rootfs"
       - "/var/run:/var/run"

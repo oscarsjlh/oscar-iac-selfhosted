@@ -1,0 +1,33 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for pull
+- name: Find local docker compose files
+  delegate_to: localhost
+  run_once: true
+  find:
+    paths: "/home/oscar/iac/docker/"
+    recurse: no
+    file_type: directory
+  register: local_docker_compose
+- name: Run docker compose pull 
+  community.docker.docker_compose_v2_pull:
+    project_src: "{{ (item.path | split('/'))[5] }}"
+  loop: "{{ local_docker_compose.files }}"
+  register: output
+- name: show results
+- name: Run docker compose up 
+  community.docker.docker_compose_v2:
+    project_src: "{{ (item.path | split('/'))[5] }}"
+  loop: "{{ local_docker_compose.files }}"
+  register: output
+- name: show results
+  ansible.builtin.debug:
+    var: output
+
+
+
+- name: Print
+  ansible.builtin.debug:
+    msg: path "{{ (item.path | split('/'))[5] }}/docker-compose.yaml, {{ item.path }}"
+  loop: "{{ local_docker_compose.files }}"
+
