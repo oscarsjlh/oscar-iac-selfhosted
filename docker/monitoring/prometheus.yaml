@@ -1,16 +1,47 @@
 global:
-  scrape_interval: 1m
-
+  scrape_interval: "1m"
 scrape_configs:
   - job_name: 'prometheus'
     scrape_interval: 1m
     static_configs:
       - targets: ['localhost:9090']
 
+  - job_name: 'OpenWrt'
+    static_configs:
+      - targets: ['router.home.com:9100']
   - job_name: 'node'
     static_configs:
       - targets: ['node-exporter:9100']
   - job_name: 'cadvisor'
-    scrape_interval: 5s
+    scrape_interval: 15s
     static_configs:
       - targets: ['cadvisor:8080']
+    metric_relabel_configs:
+      - source_labels: ['container_label_com_docker_swarm_service_name']
+        target_label: 'service'
+      - source_labels: ['name']
+        target_label: 'container'
+  - job_name: 'nvidia'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['dcgm-exporter:9400']
+  - job_name: 'blackbox'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]  # Look for a HTTP 200 response.
+    static_configs:
+      - targets:
+        - https://grafana.oscarcorner.com    # Target to probe with http.
+        - https://jellyfin.oscarcorner.com   # Target to probe with https.
+        - https://radarr.oscarcorner.com
+        - https://radarr.oscarcorner.com
+        - https://traefik-docker.oscarcorner.com
+        - https://immich.oscarcorner.com
+        - https://navidrome.oscarcorner.com
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox:9115  # The blackbox exporter's real hostname:port.

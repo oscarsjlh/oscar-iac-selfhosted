@@ -17,8 +17,8 @@
   loop: "{{ local_docker_compose.files }}"
 - name: Copy all docker files to remote
   copy:
-    src: "{{ item.path }}/docker-compose.yaml"
-    dest: "{{ (item.path | split('/'))[5] }}/docker-compose.yaml"
+    src: "{{ item.path }}/"
+    dest: "{{ (item.path | split('/'))[5] }}/"
     mode: '0644'
     owner: "oscar"
     group: "oscar"

@@ -61,7 +61,7 @@ services:
       - 7878:7878
     volumes:
       - ./configs/radarr:/config
-      - /mnt/main/media/movies:/movies # optional
+      - /mnt/nas/media/movies:/movies # optional
       - /mnt/main/downloads/torrent:/downloads/torrent
       - /mnt/main/downloads/usenet:/downloads/usenet # optional
     labels:
@@ -127,7 +127,7 @@ services:
 
     volumes:
       - ./configs/sonarr-anime:/config
-      - /mnt/main/media/shows/anime:/tv
+      - /mnt/nas/media/shows/anime:/tv
       - /mnt/main/downloads/torrent:/downloads/torrent
       - /mnt/main/downloads/usenet:/downloads/usenet # optional
 
@@ -149,7 +149,7 @@ services:
     volumes:
 
       - ./configs/sonarr:/config
-      - /mnt/main/media/shows:/tv
+      - /mnt/nas/media/shows:/tv
       - /mnt/main/downloads/torrent:/downloads/torrent
       - /mnt/main/downloads/usenet:/downloads/usenet # optional
   calibre:
@@ -175,14 +175,14 @@ services:
     volumes:
       - ./configs/calibre:/config
       - ./configs/calibre-books:/oscar-lib
-      - /mnt/main/media/books:/books
+      - /mnt/nas/media/books:/books
   calibre-web:
     image: lscr.io/linuxserver/calibre-web:latest
     container_name: calibre-web
     environment: *common-environment
     <<: [*reverse-proxy-network, *common-restart]
     volumes:
-      - /mnt/main/media/books:/books
+      - /mnt/nas/media/books:/books
       - ./configs/calibre-web/data:/config
     labels:
       traefik.enable: true
@@ -208,7 +208,7 @@ services:
 
     volumes:
       - ./configs/readarr:/config
-      - /mnt/main/media/books:/books
+      - /mnt/nas/media/books:/books
       - /mnt/main/downloads/torrent:/downloads/torrent
       - /mnt/main/downloads/usenet:/downloads/usenet # optional
 
@@ -221,8 +221,8 @@ services:
       - 6767:6767
     volumes:
       - ./configs/bazarr:/config
-      - /mnt/main/media/movies:/movies
-      - /mnt/main/media/shows/anime:/tv
+      - /mnt/nas/media/movies:/movies
+      - /mnt/nas/media/shows/anime:/tv
     labels:
       traefik.enable: true
       # increase readingTimeouts for the entrypoint used here
@@ -246,7 +246,7 @@ services:
 
     volumes:
       - ./configs/lidarr:/config
-      - /mnt/main/media/music:/music #optional
+      - /mnt/nas/media/music:/music #optional
       - /mnt/main/downloads/torrent:/downloads/torrent
       - /mnt/main/downloads/usenet:/downloads/usenet # optional
     ports:
@@ -272,7 +272,7 @@ services:
       ND_BASEURL: "https://navidrome.oscarcorner.com"
     volumes:
       - "./configs/navidrome:/data"
-      - "/mnt/main/media/music:/music:ro"
+      - "/mnt/nas/media/music:/music:ro"
   slskd:
     environment:
       - SLSKD_REMOTE_CONFIGURATION=true
@@ -290,8 +290,8 @@ services:
     volumes:
 
       - ./configs/slskd:/app:rw
-      - /mnt/main/media/music:/music:rw
-      - /mnt/main/media/books:/books:ro
+      - /mnt/nas/media/music:/music:rw
+      - /mnt/nas/media/music:/books:ro
     user: 1000:1000
     image: slskd/slskd:latest
 

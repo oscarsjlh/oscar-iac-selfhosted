@@ -1,0 +1,10 @@
+- name: Run updates 
+  hosts: updates
+  become: true
+
+  tasks:
+  - name: Ran pacman -Syu
+    community.general.pacman:
+       update_cache: true
+       upgrade: true
+

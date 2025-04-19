@@ -14,18 +14,14 @@
     project_src: "{{ (item.path | split('/'))[5] }}"
   loop: "{{ local_docker_compose.files }}"
   register: output
-- name: show results
+- name: Make sure dns is up
+  community.docker.docker_compose_v2:
+    project_src: dns
 - name: Run docker compose up 
   community.docker.docker_compose_v2:
     project_src: "{{ (item.path | split('/'))[5] }}"
   loop: "{{ local_docker_compose.files }}"
   register: output
-- name: show results
-  ansible.builtin.debug:
-    var: output
-
-
-
 - name: Print
   ansible.builtin.debug:
     msg: path "{{ (item.path | split('/'))[5] }}/docker-compose.yaml, {{ item.path }}"

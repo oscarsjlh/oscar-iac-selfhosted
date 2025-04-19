@@ -15,7 +15,7 @@ services:
       - /home/oscar/jellyfin/config:/config
       - /home/oscar/jellyfin/cache:/cache
       - type: bind
-        source: /mnt/main/media
+        source: /mnt/nas/media
         target: /media
     restart: 'unless-stopped'
     # Optional - alternative address used for autodiscovery
