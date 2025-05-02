@@ -50,7 +50,7 @@ services:
     <<: *common-restart
     volumes:
       - ./configs/qbittorrent:/config
-      - /mnt/main/downloads/torrent:/downloads/torrent
+      - /mnt/main/downloads/torrent:/downloads
 
   radarr:
     image: lscr.io/linuxserver/radarr:latest
@@ -288,10 +288,9 @@ services:
       traefik.http.services.slskd.loadbalancer.server.port: 5030
       traefik.http.routers.slskd.tls.certresolver: route53
     volumes:
-
       - ./configs/slskd:/app:rw
-      - /mnt/nas/media/music:/music:rw
-      - /mnt/nas/media/music:/books:ro
+      - /mnt/main/downloads/slskd/music:/music:rw
+      - /mnt/main/downloads/slskd:/books:ro
     user: 1000:1000
     image: slskd/slskd:latest
 

@@ -120,6 +120,28 @@ services:
       #- PRINT_METRICS_AND_EXIT=false
     ports:
       - "9995:9995/tcp"
+    networks:
+      - monitoring
+  vector:
+    image: timberio/vector:latest-alpine
+    container_name: vector
+    command: --config /etc/vector/vector.toml
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./vector.toml:/etc/vector/vector.toml:ro
+    restart: unless-stopped
+    networks:
+      - monitoring
+  loki:
+    image: grafana/loki:2.9.4
+    container_name: loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    restart: unless-stopped
+    networks:
+      - monitoring
+
 
 
 
