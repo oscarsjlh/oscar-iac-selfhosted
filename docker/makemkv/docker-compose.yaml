@@ -11,4 +11,4 @@ services:
     devices:
       - "/dev/sr0:/dev/sr0"
       - "/dev/sg1:/dev/sg1"
-      - "/dev/sg2:/dev/sg2"
+      - "/dev/sg0:/dev/sg0"

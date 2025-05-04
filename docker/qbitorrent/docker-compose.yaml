@@ -40,6 +40,13 @@ services:
       - 6881:6881/udp
       - 6881:6881/tcp
     restart: unless-stopped
+    labels:
+      traefik.enable: true
+      traefik.http.routers.torrent.entrypoints: websecure
+      traefik.http.routers.torrent.rule: Host(`torrent.oscarcorner.com`)
+      traefik.http.services.torrent.loadbalancer.server.port: 8080
+      traefik.http.routers.torrent.tls.certresolver: route53
+
   qbittorrent:
     image: linuxserver/qbittorrent:latest
     container_name: qbittorrent
