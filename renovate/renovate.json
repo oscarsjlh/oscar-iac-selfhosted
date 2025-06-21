@@ -19,7 +19,7 @@
     "docker-compose"
   ],
   "managerFilePatterns": [
-    "/(?i)^docker/.+/docker-compose/docker-compose\\.ya?ml$/"
+    "docker-compose\\.ya?ml$"
   ],
   "schedule": [
     "before 3am on monday"
