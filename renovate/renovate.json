@@ -3,7 +3,7 @@
     "config:recommended",
     ":disableDependencyDashboard"
   ],
-  "recreateClosed": true,
+  "recreateWhen": "always",
   "rebaseWhen": "behind-base-branch",
   "force": {
     "branchConcurrentLimit": 5,
