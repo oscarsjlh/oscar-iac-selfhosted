@@ -26,7 +26,13 @@
       "groupName": "all docker image updates",
       "matchPackageNames": [
         "/.*/"
-      ]
+      ],
+      "versioning": "loose",
+      "matchTags": [
+        "^latest$"
+      ],
+      "pinDigests": true,
+      "replaceString": "latest"
     }
   ]
 }
