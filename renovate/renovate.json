@@ -2,6 +2,11 @@
   "extends": [
     "config:recommended"
   ],
+  "onboarding": false,
+  "repositories": [
+    "oscarsjlh/oscar-iac-selfhosted"
+  ],
+  "requireConfig": "optional",
   "enabledManagers": [
     "docker-compose"
   ],
