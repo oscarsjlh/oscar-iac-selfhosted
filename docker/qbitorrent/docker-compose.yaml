@@ -237,27 +237,6 @@ services:
       traefik.http.routers.bazarr.rule: Host(`bazarr.oscarcorner.com`)
       traefik.http.services.bazarr.loadbalancer.server.port: 6767
       traefik.http.routers.bazarr.tls.certresolver: route53
-
-  lidarr:
-    image: lscr.io/linuxserver/lidarr:latest
-    container_name: lidarr
-    <<: [*reverse-proxy-network, *common-restart]
-    environment: *common-environment 
-    labels:
-      traefik.enable: true
-      # increase readingTimeouts for the entrypoint used here
-      traefik.http.routers.lidarr.entrypoints: websecure
-      traefik.http.routers.lidarr.rule: Host(`lidarr.oscarcorner.com`)
-      traefik.http.services.lidarr.loadbalancer.server.port: 8686
-      traefik.http.routers.lidarr.tls.certresolver: route53
-
-    volumes:
-      - ./configs/lidarr:/config
-      - /mnt/nas/media/music:/music #optional
-      - /mnt/main/downloads/torrent:/downloads/torrent
-      - /mnt/main/downloads/usenet:/downloads/usenet # optional
-    ports:
-      - 8686:8686
   navidrome:
     image: deluan/navidrome:latest
     user: 1000:1000 # should be owner of volumes

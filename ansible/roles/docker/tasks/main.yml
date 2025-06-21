@@ -6,7 +6,7 @@
   delegate_to: localhost
   run_once: true
   find:
-    paths: "/home/oscar/iac/projects/docker/"
+    paths: "/home/oscar/projects/iac/docker/"
     recurse: no
     file_type: directory
   register: local_docker_compose

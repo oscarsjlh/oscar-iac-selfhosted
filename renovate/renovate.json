@@ -1,0 +1,25 @@
+{
+  "extends": [
+    "config:base"
+  ],
+  "enabledManagers": [
+    "docker-compose"
+  ],
+  "fileMatch": [
+    "(?i)^docker/.+/docker-compose/docker-compose\\.ya?ml$"
+  ],
+  "schedule": [
+    "before 3am on monday"
+  ],
+  "packageRules": [
+    {
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackagePatterns": [
+        ".*"
+      ],
+      "groupName": "all docker image updates"
+    }
+  ]
+}

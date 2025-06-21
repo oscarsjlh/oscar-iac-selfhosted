@@ -23,9 +23,9 @@ echo ""
 echo ""
 restic backup /mnt/nfs/media/music/ \
   /home/oscar/jellyfin/config \
-  /home/oscar/qbittorrent/configs \
+  /home/oscar/qbitorrent/configs/ \
   /mnt/nfs/backup/ \
-  --exclude-file /mnt/nfs/backup/.Trash-1000/*/** \
+  --exclude-file /home/oscar/backup/excludes.txt \
   --compression max --cleanup-cache \
   --exclude-caches
 check "Something went wrong backing up the server"

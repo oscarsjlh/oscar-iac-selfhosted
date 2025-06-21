@@ -1,0 +1,12 @@
+/home/oscar/qbitorrent/configs/bazarr/cache/**
+/home/oscar/qbitorrent/configs/bazarr/backup/**
+/mnt/nfs/backup/.Trash-1000/**
+/home/oscar/qbitorrent/configs/calibre/cache.db
+/home/oscar/qbitorrent/configs/calibre/calibre/.cache
+/home/oscar/qbitorrent/configs/calibre/.cache/**
+/home/oscar/qbitorrent/configs/navidrome/cache/**
+/home/oscar/qbitorrent/configs/slskd/data/browse.cache
+/home/oscar/qbitorrent/configs/radarr/MediaCover/**
+/home/oscar/qbitorrent/configs/readarr/MediaCover/**
+/home/oscar/qbitorrent/configs/**/MediaCover/**
+/home/oscar/jellyfin/config/metadata/**
