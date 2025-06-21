@@ -3,6 +3,12 @@
     "config:recommended",
     ":disableDependencyDashboard"
   ],
+  "recreateClosed": true,
+  "rebaseWhen": "behind-base-branch",
+  "force": {
+    "branchConcurrentLimit": 5,
+    "prConcurrentLimit": 5
+  },
   "dependencyDashboard": false,
   "onboarding": false,
   "repositories": [
@@ -23,14 +29,11 @@
       "matchDatasources": [
         "docker"
       ],
-      "groupName": "all docker image updates",
+      "groupName": null,
       "matchPackageNames": [
         "/.*/"
       ],
       "versioning": "loose",
-      "matchTags": [
-        "^latest$"
-      ],
       "pinDigests": true,
       "replaceString": "latest"
     }
