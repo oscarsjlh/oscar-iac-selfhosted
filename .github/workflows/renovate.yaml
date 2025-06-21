@@ -26,3 +26,4 @@ jobs:
         with:
           configurationFile: renovate/renovate.json
           token: '${{ steps.get_token.outputs.token }}'
+          local: true
