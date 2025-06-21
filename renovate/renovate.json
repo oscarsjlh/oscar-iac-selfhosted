@@ -1,15 +1,9 @@
 {
-  "repositories": [
-    "oscarsjlh/oscar-iac-selfhosted"
-  ],
-  "branchPrefix": "test-renovate/",
-  "dryRun": "full",
-  "username": "renovate-release",
-  "gitAuthor": "Renovate Bot <bot@renovateapp.com>",
-  "onboarding": false,
-  "platform": "github",
   "extends": [
     "config:recommended"
+  ],
+  "repositories": [
+    "oscarsjlh/oscar-iac-selfhosted"
   ],
   "enabledManagers": [
     "docker-compose"
