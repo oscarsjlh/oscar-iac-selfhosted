@@ -74,7 +74,7 @@ services:
     devices: 
       - "/dev/kmsg"
   grafana:
-    image: grafana/grafana
+    image: grafana/grafana:latest
     environment: 
       - GF_SERVER_ROOT_URL=https://grafana.oscarcorner.com/
     labels:
@@ -103,7 +103,7 @@ services:
         - SYS_ADMIN
     ports:
         - 9400:9400
-    image: nvcr.io/nvidia/k8s/dcgm-exporter
+    image: nvcr.io/nvidia/k8s/dcgm-exporter:latest
     networks:
       - monitoring
   nut-exporter:
@@ -123,7 +123,7 @@ services:
     networks:
       - monitoring
   vector:
-    image: timberio/vector:latest-alpine
+    image: timberio/vector:latest-alpine:latest
     container_name: vector
     command: --config /etc/vector/vector.toml
     volumes:

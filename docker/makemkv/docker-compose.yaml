@@ -1,7 +1,7 @@
 version: '3'
 services:
   makemkv:
-    image: jlesage/makemkv
+    image: jlesage/makemkv:latest
     ports:
       - "5800:5800"
     volumes:
