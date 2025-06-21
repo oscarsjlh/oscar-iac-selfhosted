@@ -2,7 +2,7 @@
   "extends": [
     "config:recommended"
   ],
-  "onboard": true,
+  "onboarding": false,
   "repositories": [
     "oscarsjlh/oscar-iac-selfhosted"
   ],
