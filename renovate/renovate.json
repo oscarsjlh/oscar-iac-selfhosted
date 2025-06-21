@@ -21,9 +21,6 @@
   "managerFilePatterns": [
     "docker-compose\\.ya?ml$"
   ],
-  "schedule": [
-    "before 3am on monday"
-  ],
   "packageRules": [
     {
       "matchDatasources": [
