@@ -1,6 +1,7 @@
 {
   "extends": [
-    "config:base"
+    "config:recommended",
+    ":disableDependencyDashboard"
   ],
   "dependencyDashboard": false,
   "onboarding": false,
