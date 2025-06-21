@@ -36,7 +36,7 @@ services:
     restart: unless-stopped
 
   unbound:
-    image: mvance/unbound
+    image: mvance/unbound:latest
     networks:
       default:
         ipv4_address: 172.21.200.3 # <-- this is used by pihole as upstream DNS
