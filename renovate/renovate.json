@@ -32,7 +32,7 @@
       ],
       "versioning": "loose",
       "pinDigests": true,
-      "replaceString": "latest"
+      "enabled": true
     }
   ]
 }
