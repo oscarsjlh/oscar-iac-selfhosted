@@ -9,13 +9,13 @@
   "onboarding": false,
   "platform": "github",
   "extends": [
-    "config:base"
+    "config:recommended"
   ],
   "enabledManagers": [
     "docker-compose"
   ],
-  "fileMatch": [
-    "(?i)^docker/.+/docker-compose/docker-compose\\.ya?ml$"
+  "managerFilePatterns": [
+    "/(?i)^docker/.+/docker-compose/docker-compose\\.ya?ml$/"
   ],
   "schedule": [
     "before 3am on monday"
@@ -25,10 +25,10 @@
       "matchDatasources": [
         "docker"
       ],
-      "matchPackagePatterns": [
-        ".*"
-      ],
-      "groupName": "all docker image updates"
+      "groupName": "all docker image updates",
+      "matchPackageNames": [
+        "/.*/"
+      ]
     }
   ]
 }
