@@ -13,8 +13,8 @@ jobs:
         id: get_token
         uses: actions/create-github-app-token@v1
         with:
-          private-key: ${{ secrets.private_key }}
-          app-id: ${{ secrets.app_id }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
+          app-id: ${{ secrets.APP_ID }}
           owner: ${{ github.repository_owner }}
           repositories: 'oscar-iac-selfhosted'
 
