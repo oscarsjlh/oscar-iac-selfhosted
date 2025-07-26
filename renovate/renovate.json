@@ -1,0 +1,38 @@
+{
+  "extends": [
+    "config:recommended",
+    ":disableDependencyDashboard"
+  ],
+  "recreateWhen": "always",
+  "rebaseWhen": "behind-base-branch",
+  "force": {
+    "branchConcurrentLimit": 5,
+    "prConcurrentLimit": 5
+  },
+  "dependencyDashboard": false,
+  "onboarding": false,
+  "repositories": [
+    "oscarsjlh/oscar-iac-selfhosted"
+  ],
+  "requireConfig": "optional",
+  "enabledManagers": [
+    "docker-compose"
+  ],
+  "managerFilePatterns": [
+    "docker-compose\\.ya?ml$"
+  ],
+  "packageRules": [
+    {
+      "matchDatasources": [
+        "docker"
+      ],
+      "groupName": null,
+      "matchPackageNames": [
+        "/.*/"
+      ],
+      "versioning": "loose",
+      "pinDigests": true,
+      "enabled": true
+    }
+  ]
+}
