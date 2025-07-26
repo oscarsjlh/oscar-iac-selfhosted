@@ -26,5 +26,7 @@ jobs:
         with:
           configurationFile: renovate/renovate.json
           token: '${{ steps.get_token.outputs.token }}'
+          RENOVATE_GITHUB_APP_ID: ${{ secret.APP_ID }}
+
         env:
           LOG_LEVEL: debug
