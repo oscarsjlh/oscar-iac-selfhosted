@@ -123,7 +123,7 @@ services:
     networks:
       - monitoring
   vector:
-    image: timberio/vector:latest-alpine:latest
+    image: timberio/vector:0.10.0-alpine
     container_name: vector
     command: --config /etc/vector/vector.toml
     volumes:

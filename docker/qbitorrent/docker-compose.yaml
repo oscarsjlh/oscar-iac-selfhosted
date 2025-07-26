@@ -134,7 +134,7 @@ services:
 
     volumes:
       - ./configs/sonarr-anime:/config
-      - /mnt/nas/media/shows/anime:/tv
+      - /mnt/nas/media/anime-shows:/tv
       - /mnt/main/downloads/torrent:/downloads/torrent
       - /mnt/main/downloads/usenet:/downloads/usenet # optional
 
