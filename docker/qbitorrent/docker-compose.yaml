@@ -36,7 +36,7 @@ services:
     networks:
       - reverse-proxy-network
     ports:
-      - '8080:8080'
+      - "8080:8080"
       - 6881:6881/udp
       - 6881:6881/tcp
     restart: unless-stopped
@@ -96,7 +96,6 @@ services:
       traefik.http.services.prowlarr.loadbalancer.server.port: 9696
       traefik.http.routers.prowlarr.tls.certresolver: route53
 
-
   sabnzbd:
     image: lscr.io/linuxserver/sabnzbd:latest
     container_name: sabnzbd
@@ -154,7 +153,6 @@ services:
       traefik.http.routers.sonarr.tls.certresolver: route53
 
     volumes:
-
       - ./configs/sonarr:/config
       - /mnt/nas/media/shows:/tv
       - /mnt/main/downloads/torrent:/downloads/torrent
@@ -162,7 +160,7 @@ services:
   calibre:
     image: lscr.io/linuxserver/calibre:latest
     container_name: calibre
-    environment: 
+    environment:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TZ}
@@ -198,26 +196,6 @@ services:
       traefik.http.routers.calibre-web.rule: Host(`calibre-web.oscarcorner.com`)
       traefik.http.services.calibre-web.loadbalancer.server.port: 8083
       traefik.http.routers.calibre-web.tls.certresolver: route53
-  readarr:
-    image: lscr.io/linuxserver/readarr:develop
-    container_name: readarr
-    environment: *common-environment
-    <<: [*reverse-proxy-network, *common-restart]
-    ports:
-      - 8787:8787
-    labels:
-      traefik.enable: true
-      # increase readingTimeouts for the entrypoint used here
-      traefik.http.routers.readarr.entrypoints: websecure
-      traefik.http.routers.readarr.rule: Host(`readarr.oscarcorner.com`)
-      traefik.http.services.readarr.loadbalancer.server.port: 8787
-      traefik.http.routers.readarr.tls.certresolver: route53
-
-    volumes:
-      - ./configs/readarr:/config
-      - /mnt/nas/media/books:/books
-      - /mnt/main/downloads/torrent:/downloads/torrent
-      - /mnt/main/downloads/usenet:/downloads/usenet # optional
 
   bazarr:
     image: lscr.io/linuxserver/bazarr:latest
@@ -279,9 +257,10 @@ services:
       - /mnt/main/downloads/slskd:/books:ro
     user: 1000:1000
     image: slskd/slskd:latest
+    <<: [*reverse-proxy-network, *common-restart]
 
 # Network definitions
+#
 networks:
   reverse-proxy-network:
     external: true
-

@@ -1,0 +1,18 @@
+services:
+  picard:
+    container_name: picard
+    networks:
+      - reverse-proxy-network
+    labels:
+      traefik.enable: true
+      traefik.http.routers.picard.entrypoints: websecure
+      traefik.http.routers.picard.rule: Host(`picard.oscarcorner.com`)
+      traefik.http.services.picard.loadbalancer.server.port: 5800
+      traefik.http.routers.picard.tls.certresolver: route53
+    image: mikenye/picard:latest
+    volumes:
+      - "./config:/config:rw"
+      - "/mnt/nas/media/music:/storage:rw"
+networks:
+  reverse-proxy-network:
+    external: true

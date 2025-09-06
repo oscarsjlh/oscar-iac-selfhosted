@@ -1,9 +1,18 @@
-version: '3'
 services:
   makemkv:
+    container_name: makemkv
+    labels:
+      traefik.enable: true
+      # increase readingTimeouts for the entrypoint used here
+      traefik.http.routers.makemkv.entrypoints: websecure
+      traefik.http.routers.makemkv.rule: Host(`makemkv.oscarcorner.com`)
+      traefik.http.services.makemkv.loadbalancer.server.port: 8096
+      traefik.http.routers.makemkv.tls.certresolver: route53
     image: jlesage/makemkv:latest
     ports:
       - "5800:5800"
+    networks:
+      - reverse-proxy-network
     volumes:
       - "/docker/appdata/makemkv:/config:rw"
       - "/mnt/main/makemkv:/storage:ro"
@@ -12,3 +21,6 @@ services:
       - "/dev/sr0:/dev/sr0"
       - "/dev/sg1:/dev/sg1"
       - "/dev/sg0:/dev/sg0"
+networks:
+  reverse-proxy-network:
+    external: true

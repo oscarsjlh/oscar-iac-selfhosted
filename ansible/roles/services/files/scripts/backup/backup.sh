@@ -25,6 +25,7 @@ restic backup /mnt/nfs/media/music/ \
   /home/oscar/jellyfin/config \
   /home/oscar/qbitorrent/configs/ \
   /mnt/nfs/backup/ \
+  /mnt/smb_backup/ \
   --exclude-file /home/oscar/backup/excludes.txt \
   --compression max --cleanup-cache \
   --exclude-caches
