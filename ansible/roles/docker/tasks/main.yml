@@ -19,23 +19,22 @@
   copy:
     src: "{{ item.path }}/"
     dest: "{{ (item.path | split('/'))[6] }}/"
-    mode: '0644'
+    mode: "0644"
     owner: "oscar"
     group: "oscar"
   loop: "{{ local_docker_compose.files }}"
-- name: Run docker compose up 
+- name: Run docker compose up
   community.docker.docker_compose_v2:
     project_src: "{{ (item.path | split('/'))[6] }}"
+    remove_orphans: true
+    remove_volumes: true
   loop: "{{ local_docker_compose.files }}"
   register: output
 - name: show results
   ansible.builtin.debug:
     var: output
 
-
-
 - name: Print
   ansible.builtin.debug:
     msg: path "{{ (item.path | split('/'))[6] }}/docker-compose.yaml, {{ item.path }}"
   loop: "{{ local_docker_compose.files }}"
-

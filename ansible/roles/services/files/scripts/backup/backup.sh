@@ -23,6 +23,7 @@ echo ""
 echo ""
 restic backup /mnt/nfs/media/music/ \
   /home/oscar/jellyfin/config \
+  /home/oscar/forgejo-backup \
   /home/oscar/qbitorrent/configs/ \
   /mnt/nfs/backup/ \
   /mnt/smb_backup/ \

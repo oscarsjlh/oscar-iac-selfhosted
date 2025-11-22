@@ -1,0 +1,9 @@
+[Unit]
+Description=Backup script
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/home/oscar/forgejo-backup/backup.sh
+
