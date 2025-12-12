@@ -6,7 +6,7 @@ REMOTE_USER="backupap"
 REMOTE_HOST="nas.oscarcorner.com"
 DOCKER_CONTAINER="ix-forgejo-forgejo-1"
 REMOTE_BACKUP_DIR="/mnt/Black-Sabbath/Homedirs/AppBackup/backupap"
-LOCAL_BACKUP_DIR="."
+LOCAL_BACKUP_DIR="$HOME/forgejo-backup"
 DATE="$(date +%Y-%m-%d)"
 BACKUP_FILE="backup-${DATE}.zip"
 REMOTE_TMP_FILE="/tmp/${BACKUP_FILE}"
@@ -25,15 +25,15 @@ ssh "${REMOTE_USER}@${REMOTE_HOST}" \
 
 echo "[*] Deleting backups older than 30 days on remote server..."
 ssh "${REMOTE_USER}@${REMOTE_HOST}" \
-  "find ${REMOTE_BACKUP_DIR} -maxdepth 1 -type f -name 'backup-*.zip' -mtime +30 -exec rm -vf {} \;"
+  "find ${REMOTE_BACKUP_DIR} -maxdepth 1 -type f -name 'backup-*.zip' -mtime +7 -exec rm -vf {} \;"
 
 echo "[*] Downloading latest backup file to local machine..."
 scp "${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_BACKUP_DIR}/${BACKUP_FILE}" "${LOCAL_BACKUP_DIR}/"
 
-if [ -d ${LOCAL_BACKUP_DIR}/${BACKUP_FILE} ]; then
+if [ -f "${LOCAL_BACKUP_DIR}"/"${BACKUP_FILE}" ]; then
   echo "[*] Removeing backup from remote server"
   ssh "${REMOTE_USER}@${REMOTE_HOST}" \
     "rm ${REMOTE_BACKUP_DIR}/${BACKUP_FILE}"
 fi
 
-find ${LOCAL_BACKUP_DIR} -maxdepth 1 -type f -name 'backup-*.zip' -mtime +30 -exec rm -vf {} \;
+find ${LOCAL_BACKUP_DIR} -maxdepth 1 -type f -name 'backup-*.zip' -mtime +7 -exec rm -vf {} \;
