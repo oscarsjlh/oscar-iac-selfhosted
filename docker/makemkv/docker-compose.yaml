@@ -6,7 +6,7 @@ services:
       # increase readingTimeouts for the entrypoint used here
       traefik.http.routers.makemkv.entrypoints: websecure
       traefik.http.routers.makemkv.rule: Host(`makemkv.oscarcorner.com`)
-      traefik.http.services.makemkv.loadbalancer.server.port: 8096
+      traefik.http.services.makemkv.loadbalancer.server.port: 5800
       traefik.http.routers.makemkv.tls.certresolver: route53
     image: jlesage/makemkv:latest
     ports:

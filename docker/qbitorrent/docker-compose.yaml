@@ -237,6 +237,67 @@ services:
     volumes:
       - "./configs/navidrome:/data"
       - "/mnt/nas/media/music:/music:ro"
+  cleanuparr:
+    image: ghcr.io/cleanuparr/cleanuparr:latest
+    container_name: cleanuparr
+    restart: unless-stopped
+    ports:
+      - "11011:11011"
+    volumes:
+      - ./configs/cleanuparr:/config
+    <<: [*reverse-proxy-network, *common-restart]
+    environment:
+      - PORT=11011
+      - PUID=1000
+      - PGID=1000
+      - UMASK=022
+      - TZ=Etc/UTC
+    labels:
+      traefik.enable: true
+      # increase readingTimeouts for the entrypoint used here
+      traefik.http.routers.cleanuparr.entrypoints: websecure
+      traefik.http.routers.cleanuparr.rule: Host(`cleanuparr.oscarcorner.com`)
+      traefik.http.services.cleanuparr.loadbalancer.server.port: 11011
+      traefik.http.routers.cleanuparr.tls.certresolver: route53
+  huntarr:
+    image: huntarr/huntarr:latest
+    container_name: huntarr
+    restart: always
+    ports:
+      - "9705:9705"
+    volumes:
+      - ./configs/huntarr:/config
+    environment:
+      - TZ=Etc/UTC
+    <<: [*reverse-proxy-network, *common-restart]
+    labels:
+      traefik.enable: true
+      # increase readingTimeouts for the entrypoint used here
+      traefik.http.routers.huntarr.entrypoints: websecure
+      traefik.http.routers.huntarr.rule: Host(`huntarr.oscarcorner.com`)
+      traefik.http.services.huntarr.loadbalancer.server.port: 9705
+      traefik.http.routers.huntarr.tls.certresolver: route53
+  profilarr:
+    image: santiagosayshey/profilarr:latest # or :beta
+    container_name: profilarr
+    ports:
+      - "6868:6868"
+    <<: [*reverse-proxy-network, *common-restart]
+    volumes:
+      - ./configs/profilarr:/config
+    environment:
+      - PUID=1000 # Set to your user ID
+      - PGID=1000 # Set to your group ID
+      - UMASK=022 # Optional, defaults to 022
+      - TZ=UTC # Set your timezone
+    restart: unless-stopped
+    labels:
+      traefik.enable: true
+      # increase readingTimeouts for the entrypoint used here
+      traefik.http.routers.profilarr.entrypoints: websecure
+      traefik.http.routers.profilarr.rule: Host(`profilarr.oscarcorner.com`)
+      traefik.http.services.profilarr.loadbalancer.server.port: 6868
+      traefik.http.routers.profilarr.tls.certresolver: route53
   slskd:
     environment:
       - SLSKD_REMOTE_CONFIGURATION=true
@@ -258,8 +319,7 @@ services:
     user: 1000:1000
     image: slskd/slskd:latest
     <<: [*reverse-proxy-network, *common-restart]
-
-# Network definitions
+  # Network definitions
 #
 networks:
   reverse-proxy-network:

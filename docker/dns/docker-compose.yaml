@@ -4,21 +4,19 @@ volumes:
 
 services:
   pihole:
+    env_file: "pihole.env"
     container_name: pihole
     image: pihole/pihole:2025.06.0
     ports:
-      - '53:53/tcp'
-      - '53:53/udp'
+      - "53:53/tcp"
+      - "53:53/udp"
     networks:
       - default
       - reverse-proxy-network
     environment:
-      TZ: 'Europe/London'
-    # Set a password to access the web interface. Not setting one will result in a random password being assigned
-      FTLCONF_webserver_api_password: 'correct horse battery staple'
+      TZ: "Europe/London"
       # If using Docker's default `bridge` network setting the dns listening mode should be set to 'all'3
-      FTLCONF_dns_listeningMode: 'all'
-      PIHOLE_DNS_: 172.21.200.3#53
+      FTLCONF_dns_listeningMode: "all"
     labels:
       traefik.enable: true
       # increase readingTimeouts for the entrypoint used here
@@ -27,12 +25,11 @@ services:
       traefik.http.services.pihole.loadbalancer.server.port: 80
       traefik.http.routers.pihole.tls.certresolver: route53
       traefik.http.routers.pihole.tls: true
-      treafik.http.routers.pihole.service: pihole
+      traefik.http.routers.pihole.service: pihole
       traefik.docker.network: reverse-proxy-network
-
     volumes:
-      - 'pihole:/etc/pihole'
-      - 'dnsmasq:/etc/dnsmasq.d'
+      - "pihole:/etc/pihole"
+      - "dnsmasq:/etc/dnsmasq.d"
     restart: unless-stopped
 
   unbound:
@@ -40,13 +37,9 @@ services:
     networks:
       default:
         ipv4_address: 172.21.200.3 # <-- this is used by pihole as upstream DNS
-    ports:
-    - "5335:53/tcp" # expose a different port (5335) so you can use it directly
-    - "5335:53/udp"
     volumes:
-      - "./dns/forward-records.conf:/opt/unbound/etc/unbound/forward-records.conf"
-      - "./dns/a-records.conf:/opt/unbound/etc/unbound/a-records.conf"
-
+      - /etc/localtime:/etc/localtime:ro
+      - ./unbound/unbound.conf:/etc/unbound/unbound.conf:ro
     restart: unless-stopped
 
 networks:
@@ -60,4 +53,3 @@ networks:
           ip_range: 172.21.200.0/24
   reverse-proxy-network:
     external: true
-

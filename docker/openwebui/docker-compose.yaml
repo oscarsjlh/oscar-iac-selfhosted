@@ -1,0 +1,24 @@
+services:
+  openwebui:
+    image: ghcr.io/open-webui/open-webui:main
+    ports:
+      - "3000:8080"
+    networks:
+      - reverse-proxy-network
+    labels:
+      traefik.enable: true
+      # increase readingTimeouts for the entrypoint used here
+      traefik.http.routers.ai.entrypoints: websecure
+      traefik.http.routers.ai.rule: Host(`ai.oscarcorner.com`)
+      traefik.http.services.ai.loadbalancer.server.port: 8080
+      traefik.http.routers.ai.tls.certresolver: route53
+    environment:
+      - OLLAMA_BASE_URL=http://182.168.1.101:11434
+    volumes:
+      - ./configs:/app/backend/data
+volumes:
+  open-webui:
+
+networks:
+  reverse-proxy-network:
+    external: true

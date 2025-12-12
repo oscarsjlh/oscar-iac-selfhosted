@@ -12,8 +12,8 @@ services:
     ports:
       - 80:80
       - 443:443
-     # - 10000:10000 # optional
-     # - 33073:33073 # optional
+      # - 10000:10000 # optional
+      # - 33073:33073 # optional
     environment:
       - TRAEFIK_DASHBOARD_CREDENTIALS=${TRAEFIK_DASHBOARD_CREDENTIALS}
     volumes:
@@ -21,7 +21,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./letsencrypt:/letsencrypt
       - ./config/traefik.yaml:/traefik.yaml:ro
-      - ./config.yaml:/config.yaml:ro
+      - ./config/rules.yml:/rules.yml:ro
       - /home/oscar/traefik/config/logs:/var/log/traefik
     labels:
       - "traefik.enable=true"
