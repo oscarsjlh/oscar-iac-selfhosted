@@ -1,0 +1,71 @@
+http:
+  routers:
+    git-router:
+      rule: Host(`git.oscarcorner.com`)
+      entrypoints:
+        - websecure
+      tls: {}
+      service: git-service
+
+    router-router:
+      rule: Host(`router.oscarcorner.com`)
+      entrypoints:
+        - websecure
+      tls: {}
+      service: admin
+    bentopdf-router:
+      rule: Host(`pdf.oscarcorner.com`)
+      entrypoints:
+        - websecure
+      tls: {}
+      service: bentopdf-service
+    netdata-router:
+      rule: Host(`netdata.oscarcorner.com`)
+      entrypoints:
+        - websecure
+      tls: {}
+      service: netdata-service
+    makemkv-router:
+      rule: Host(`makemkv.oscarcorner.com`)
+      entrypoints:
+        - websecure
+      tls: {}
+      service: makemkv-service
+
+
+
+
+  services:
+    git-service:
+      loadBalancer:
+        servers:
+          - url: http://192.168.1.171:30142
+    bentopdf-service:
+      loadBalancer:
+        servers:
+          - url: http://192.168.1.171:30289
+    netdata-service:
+      loadBalancer:
+        servers:
+          - url: http://192.168.1.171:20489
+    makemkv-service:
+      loadBalancer:
+        servers:
+          - url: http://192.168.1.171:5800
+    admin:
+      loadBalancer:
+        servers:
+          - url: http://192.168.1.1:80
+
+tcp:
+  routers:
+    git-router-ssh:
+      rule: HostSNI(`*`)
+      service: git-service-ssh
+      entrypoints: git-ssh
+
+  services:
+    git-service-ssh:
+      loadBalancer:
+        servers:
+          - address: 192.168.1.171:30143

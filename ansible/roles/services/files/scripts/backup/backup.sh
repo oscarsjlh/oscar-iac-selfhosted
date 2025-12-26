@@ -24,7 +24,9 @@ echo ""
 restic backup /mnt/nfs/media/music/ \
   /home/oscar/jellyfin/config \
   /home/oscar/forgejo-backup \
+  /home/oscar/immich \
   /home/oscar/qbitorrent/configs/ \
+  /home/oscar/technitium \
   /mnt/nfs/backup/ \
   /mnt/smb_backup/ \
   --exclude-file /home/oscar/backup/excludes.txt \

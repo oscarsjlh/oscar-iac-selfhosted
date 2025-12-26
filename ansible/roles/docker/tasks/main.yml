@@ -2,7 +2,7 @@
 ---
 # tasks file for docker
 #
-- name: Find local docker compose files
+- name: Find local docker service directories
   delegate_to: localhost
   run_once: true
   find:
@@ -10,19 +10,38 @@
     recurse: no
     file_type: directory
   register: local_docker_compose
-- name: Makes sure all docker dirs exisxts
+- name: Create docker service directories on remote
   file:
     path: "{{ (item.path | split('/'))[6] }}"
     state: directory
   loop: "{{ local_docker_compose.files }}"
-- name: Copy all docker files to remote
+- name: Copy all docker files and folders to remote
   copy:
     src: "{{ item.path }}/"
     dest: "{{ (item.path | split('/'))[6] }}/"
-    mode: "0644"
+    mode: preserve
     owner: "oscar"
     group: "oscar"
+    directory_mode: "0755"
   loop: "{{ local_docker_compose.files }}"
+
+- name: Find shell scripts in docker directories
+  find:
+    paths: "{{ (item.path | split('/'))[6] }}"
+    patterns: "*.sh"
+    recurse: true
+  loop: "{{ local_docker_compose.files }}"
+  register: shell_scripts
+  ignore_errors: true
+
+- name: Ensure shell scripts are executable
+  file:
+    path: "{{ item.path }}"
+    mode: "0755"
+    owner: "oscar"
+    group: "oscar"
+  loop: "{{ shell_scripts.results | selectattr('files', 'defined') | map(attribute='files') | flatten }}"
+  when: shell_scripts.results is defined
 - name: Run docker compose up
   community.docker.docker_compose_v2:
     project_src: "{{ (item.path | split('/'))[6] }}"

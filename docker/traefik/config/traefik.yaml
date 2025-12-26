@@ -1,0 +1,43 @@
+api:
+  dashboard: true
+  debug: true
+entryPoints:
+  websecure:
+    address: :443
+    transport:
+      respondingTimeouts:
+        readTimeout: 600s
+        idleTimeout: 600s
+        writeTimeout: 600s
+  git-ssh:
+    address: ":2222"
+  http:
+    address: ":80"
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+serversTransport:
+  insecureSkipVerify: true
+providers:
+  file:
+    filename: "./rules.yml"
+    watch: true
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
+certificatesResolvers:
+  route53:
+    acme:
+      email: wazor12@gmail.com
+      storage: /letsencrypt/acme.json
+      dnsChallenge:
+        provider: route53 # change as required
+        # disablePropagationCheck: true # Some people using Cloudflare note this can solve DNS propagation issues.
+        delayBeforeCheck: "0"
+log:
+  format: json
+  level: INFO
+accessLog:
+  format: "json"
