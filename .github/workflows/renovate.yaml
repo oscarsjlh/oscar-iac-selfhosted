@@ -1,10 +1,13 @@
 name: Renovate
 on:
   push:
+    branches:
+      - main
   schedule:
-    # The "*" (#42, asterisk) character has special semantics in YAML, so this
-    # string has to be quoted.
-    - cron: '0/15 * * * *'
+    # Run daily at 3 AM UTC
+    - cron: '0 3 * * *'
+  workflow_dispatch:  # Allow manual triggers
+
 jobs:
   renovate:
     runs-on: ubuntu-latest
@@ -26,6 +29,5 @@ jobs:
         with:
           configurationFile: renovate/renovate.json
           token: '${{ steps.get_token.outputs.token }}'
-          RENOVATE_GITHUB_APP_ID: ${{ secrets.APP_ID }}
         env:
           LOG_LEVEL: debug

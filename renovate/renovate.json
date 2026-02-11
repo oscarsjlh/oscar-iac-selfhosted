@@ -1,38 +1,44 @@
 {
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended",
-    ":disableDependencyDashboard"
+    "config:recommended"
   ],
-  "recreateWhen": "always",
-  "rebaseWhen": "behind-base-branch",
-  "force": {
-    "branchConcurrentLimit": 5,
-    "prConcurrentLimit": 5
-  },
   "dependencyDashboard": false,
   "onboarding": false,
   "repositories": [
     "oscarsjlh/oscar-iac-selfhosted"
   ],
   "requireConfig": "optional",
-  "enabledManagers": [
-    "docker-compose"
-  ],
-  "managerFilePatterns": [
-    "docker-compose\\.ya?ml$"
-  ],
+  "platformAutomerge": true,
+  "automerge": true,
+  "automergeType": "pr",
+  "automergeStrategy": "squash",
+  "prConcurrentLimit": 10,
+  "branchConcurrentLimit": 10,
+  "prCreation": "immediate",
+  "rebaseWhen": "behind-base-branch",
+  "recreateWhen": "always",
+  "enabledManagers": ["docker-compose"],
+  "docker-compose": {
+    "fileMatch": ["^docker/.+/docker-compose\\.ya?ml$"]
+  },
   "packageRules": [
     {
-      "matchDatasources": [
-        "docker"
-      ],
-      "groupName": null,
-      "matchPackageNames": [
-        "/.*/"
-      ],
-      "versioning": "loose",
+      "description": "Group all Docker Compose updates into a single PR",
+      "matchManagers": ["docker-compose"],
+      "matchDatasources": ["docker"],
+      "groupName": "Docker images",
       "pinDigests": true,
-      "enabled": true
+      "versioning": "docker",
+      "enabled": true,
+      "automerge": true
+    },
+    {
+      "description": "Separate major updates for manual review",
+      "matchManagers": ["docker-compose"],
+      "matchUpdateTypes": ["major"],
+      "groupName": "Docker images (major)",
+      "automerge": false
     }
   ]
 }
