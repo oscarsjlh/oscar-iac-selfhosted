@@ -1,31 +1,66 @@
-Role Name
-=========
+Docker Role
+============
 
-A brief description of the role goes here.
+This Ansible role deploys Docker services by copying entire service directories and running Docker Compose. It handles all file types including configuration files, scripts, and docker-compose files.
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+- Docker and Docker Compose installed on target hosts
+- community.docker Ansible collection
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+This role uses hardcoded paths but can be customized by modifying the source path in tasks/main.yml:
+
+- `docker_source_path`: Source directory containing Docker service folders (default: "/home/oscar/projects/iac/docker/")
+- `docker_user`: User ownership for copied files (default: "oscar")
+- `docker_group`: Group ownership for copied files (default: "oscar")
 
 Dependencies
 ------------
 
 A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
 
+What it does
+-----------
+
+1. **Discovers Docker services**: Finds all directories in the source docker folder
+2. **Creates directories**: Creates corresponding directories on remote hosts
+3. **Copies all content**: Recursively copies entire service directories including:
+   - docker-compose.yaml files
+   - Configuration files (e.g., prometheus.yaml, blackbox.yaml)
+   - Scripts and executable files
+   - Any subdirectories and their contents
+4. **Preserves permissions**: Maintains file permissions and ensures shell scripts are executable
+5. **Deploys services**: Runs `docker compose up` for each service
+
+Directory Structure
+------------------
+
+Expected source structure:
+```
+docker/
+├── service1/
+│   ├── docker-compose.yaml
+│   ├── config.yml
+│   └── scripts/
+│       └── init.sh
+├── service2/
+│   ├── docker-compose.yaml
+│   ├── prometheus.yaml
+│   └── blackbox.yaml
+```
+
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+```yaml
+- hosts: docker_hosts
+  roles:
+    - docker
+```
 
 License
 -------

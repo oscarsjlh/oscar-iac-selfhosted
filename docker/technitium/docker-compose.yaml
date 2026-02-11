@@ -9,6 +9,7 @@ services:
     # network_mode: "host"
     ports:
       - "5380:5380/tcp"
+      - "8053:8053/tcp"
       - "53:53/udp" #DNS service
       - "53:53/tcp" #DNS service
     labels:
@@ -17,6 +18,7 @@ services:
       traefik.http.routers.technitium.rule: Host(`technitium.oscarcorner.com`)
       traefik.http.services.technitium.loadbalancer.server.port: 5380
       traefik.http.routers.technitium.tls.certresolver: route53
+      traefik.http.routers.technitium.service: technitium
 
     environment:
       - DNS_SERVER_DOMAIN=oscarcorner.com #The primary domain name used by this DNS Server to identify itself.

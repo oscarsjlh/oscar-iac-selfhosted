@@ -125,7 +125,10 @@ services:
     command: --config /etc/vector/vector.toml
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - /run/log/journal:/run/log/journal:ro
+      - /var/log/journal:/var/log/journal:ro
       - ./vector.toml:/etc/vector/vector.toml:ro
+      - /etc/machine-id:/etc/machine-id:ro
     restart: unless-stopped
     networks:
       - monitoring

@@ -23,8 +23,8 @@ echo ""
 echo ""
 restic backup /mnt/nfs/media/music/ \
   /home/oscar/jellyfin/config \
+  /mnt/nas/media/photos/immich/library \
   /home/oscar/forgejo-backup \
-  /home/oscar/immich \
   /home/oscar/qbitorrent/configs/ \
   /home/oscar/technitium \
   /mnt/nfs/backup/ \

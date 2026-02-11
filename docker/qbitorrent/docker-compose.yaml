@@ -36,28 +36,31 @@ services:
     networks:
       - reverse-proxy-network
     ports:
-      - "8080:8080"
       - 6881:6881/udp
       - 6881:6881/tcp
     restart: unless-stopped
     labels:
       traefik.enable: true
+      traefik.http.routers.torrent.service: torrent
       traefik.http.routers.torrent.entrypoints: websecure
       traefik.http.routers.torrent.rule: Host(`torrent.oscarcorner.com`)
-      traefik.http.services.torrent.loadbalancer.server.port: 8080
+      traefik.http.services.torrent.loadbalancer.server.port: 7979
       traefik.http.routers.torrent.tls.certresolver: route53
-
   qbittorrent:
     image: linuxserver/qbittorrent:latest
     container_name: qbittorrent
     depends_on:
       - gluetun
-    environment: *common-environment
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - WEBUI_PORT=7979
     network_mode: service:gluetun
     <<: *common-restart
     volumes:
       - ./configs/qbittorrent:/config
-      - /mnt/main/downloads/torrent:/downloads
+      - /mnt/main/downloads/:/downloads/
 
   radarr:
     image: lscr.io/linuxserver/radarr:latest
@@ -69,8 +72,7 @@ services:
     volumes:
       - ./configs/radarr:/config
       - /mnt/nas/media/movies:/movies # optional
-      - /mnt/main/downloads/torrent:/downloads/torrent
-      - /mnt/main/downloads/usenet:/downloads/usenet # optional
+      - /mnt/main/downloads/:/downloads
     labels:
       traefik.enable: true
       # increase readingTimeouts for the entrypoint used here
@@ -99,18 +101,16 @@ services:
   sabnzbd:
     image: lscr.io/linuxserver/sabnzbd:latest
     container_name: sabnzbd
+    depends_on:
+      - gluetun
     environment: *common-environment
     <<: [*reverse-proxy-network, *common-restart]
-    ports:
-      - 8081:8080
     labels:
       traefik.enable: true
-      # increase readingTimeouts for the entrypoint used here
       traefik.http.routers.sabnzbd.entrypoints: websecure
       traefik.http.routers.sabnzbd.rule: Host(`sabnzbd.oscarcorner.com`)
       traefik.http.services.sabnzbd.loadbalancer.server.port: 8080
       traefik.http.routers.sabnzbd.tls.certresolver: route53
-
     volumes:
       - ./configs/sabnzbd:/config
       - /mnt/main/downloads/usenet:/downloads/usenet
@@ -123,6 +123,7 @@ services:
     <<: [*reverse-proxy-network, *common-restart]
     ports:
       - 8990:8989
+
     labels:
       traefik.enable: true
       # increase readingTimeouts for the entrypoint used here
@@ -315,7 +316,9 @@ services:
     volumes:
       - ./configs/slskd:/app:rw
       - /mnt/main/downloads/slskd/music:/music:rw
+      - /mnt/main/downloads/slskd/music/organizer.sh:/organizer.sh
       - /mnt/main/downloads/slskd:/books:ro
+      - "/mnt/nas/media/music:/organized-music:rw"
     user: 1000:1000
     image: slskd/slskd:latest
     <<: [*reverse-proxy-network, *common-restart]

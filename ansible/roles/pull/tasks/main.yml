@@ -9,15 +9,15 @@
     recurse: no
     file_type: directory
   register: local_docker_compose
-- name: Run docker compose pull 
+- name: Run docker compose pull
   community.docker.docker_compose_v2_pull:
     project_src: "{{ (item.path | split('/'))[6] }}"
   loop: "{{ local_docker_compose.files }}"
   register: output
 - name: Make sure dns is up
   community.docker.docker_compose_v2:
-    project_src: dns
-- name: Run docker compose up 
+    project_src: technitium
+- name: Run docker compose up
   community.docker.docker_compose_v2:
     project_src: "{{ (item.path | split('/'))[6] }}"
   loop: "{{ local_docker_compose.files }}"
@@ -26,4 +26,3 @@
   ansible.builtin.debug:
     msg: path "{{ (item.path | split('/'))[6] }}/docker-compose.yaml, {{ item.path }}"
   loop: "{{ local_docker_compose.files }}"
-

@@ -1,0 +1,33 @@
+services:
+  mealie:
+    image: ghcr.io/mealie-recipes/mealie:v3.9.2 #
+    container_name: mealie
+    restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 1000M #
+    volumes:
+      - ./config/mealie-data:/app/data/
+    networks:
+      - reverse-proxy-network
+    environment:
+      # Set Backend ENV Variables Here
+      ALLOW_SIGNUP: "false"
+      PUID: 1000
+      PGID: 1000
+      TZ: Europe/London
+      BASE_URL: https://recipes.oscarcorner.com.com
+    labels:
+      traefik.enable: true
+      # increase readingTimeouts for the entrypoint used here
+      traefik.http.routers.recipes.entrypoints: websecure
+      traefik.http.routers.recipes.rule: Host(`recipes.oscarcorner.com`)
+      traefik.http.services.recipes.loadbalancer.server.port: 9000
+      traefik.http.routers.recipes.tls.certresolver: route53
+
+networks:
+  reverse-proxy-network:
+    external: true
+volumes:
+  mealie-data:

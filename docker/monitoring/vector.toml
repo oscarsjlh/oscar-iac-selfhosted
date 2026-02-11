@@ -1,0 +1,80 @@
+[sources.docker_logs]
+type = "docker_logs"
+
+[sources.journald]
+type = "journald"
+since_now = false
+
+
+[transforms.normalize]
+type = "remap"
+inputs = ["journald"]
+source = '''
+.timestamp = ._SOURCE_REALTIME_TIMESTAMP
+.message = .MESSAGE
+.host = get_hostname!()
+.unit = ._SYSTEMD_UNIT || "unknown"
+.level = .PRIORITY || "unknown"
+'''
+
+[transforms.journald_labels]
+type = "remap"
+inputs = ["normalize"]
+source = '''
+.loki_labels = {
+  "job": "systemd",
+  "host": .host,
+  "unit": .unit,
+  "level": .level
+}
+'''
+
+[transforms.parse_and_enrich]
+type = "remap"
+inputs = ["docker_logs"]
+source = '''
+# Parse the original message
+.log = parse_json(.message) ?? { "message": .message }
+if exists(.log.level) {
+  .level = string!(.log.level)
+} else {
+  .level = "info" # Default to info if no level given
+}
+del(.label)
+'''
+
+[transforms.docker_labels]
+type = "remap"
+inputs = ["parse_and_enrich"]
+source = '''
+.loki_labels = {
+  "job": "docker",
+  "container": .container_name || "unknown",
+  "image": .image || "unknown",
+  "service": .labels.com_docker_compose_service || "unknown",
+  "project": .labels.com_docker_compose_project || "unknown",
+  "level": .level || "info"
+  "job": "docker",
+  "container": .container_name ?? "unknown",
+  "image": .image ?? "unknown",
+  "service": .labels.com_docker_compose_service ?? "unknown",
+  "project": .labels.com_docker_compose_project ?? "unknown",
+  "level": .level
+}
+'''
+
+[sinks.console]
+type = "console"
+inputs = ["parse_and_enrich"]
+target = "stdout"
+encoding.codec = "json"
+[sinks.loki]
+type = "loki"
+inputs = ["journald_labels", "docker_labels"]  # or whatever your last transform is
+endpoint = "http://loki:3100"   # <-- adjust if Loki is at a different address
+compression = "gzip"
+encoding.codec = "json"
+
+[sinks.loki.labels]
+"*" = "{{ loki_labels }}"
+

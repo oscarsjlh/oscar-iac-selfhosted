@@ -6,6 +6,14 @@ http:
         - websecure
       tls: {}
       service: git-service
+    doh:
+      entryPoints:
+        - "websecure"
+      rule: "Host(`dns.oscarcorner.com`) && PathPrefix(`/dns-query`)"
+      middlewares:
+        - default-headers
+      tls: {}
+      service: doh
 
     router-router:
       rule: Host(`router.oscarcorner.com`)
@@ -32,10 +40,25 @@ http:
       tls: {}
       service: makemkv-service
 
-
-
-
+  middlewares:
+    default-headers:
+      headers:
+        frameDeny: true
+        sslRedirect: true
+        browserXssFilter: true
+        contentTypeNosniff: true
+        forceSTSHeader: true
+        stsIncludeSubdomains: true
+        stsPreload: true
+        stsSeconds: 15552000
+        customFrameOptionsValue: SAMEORIGIN
+        customRequestHeaders:
+          X-Forwarded-Proto: https
   services:
+    doh:
+      loadBalancer:
+        servers:
+          - url: http://dns-server:8053
     git-service:
       loadBalancer:
         servers:

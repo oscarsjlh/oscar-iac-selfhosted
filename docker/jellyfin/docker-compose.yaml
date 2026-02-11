@@ -14,7 +14,7 @@ services:
 
     volumes:
       - /home/oscar/jellyfin/config:/config
-      - /home/oscar/jellyfin/cache:/cache
+      - /mnt/main/jellyfin/cache:/cache
       - type: bind
         source: /mnt/nas/media
         target: /media
