@@ -8,7 +8,7 @@ volumes:
   grafana_storage: {}
 services:
   node-exporter:
-    image: prom/node-exporter:latest
+    image: prom/node-exporter:v1.10.2
     container_name: node-exporter
     restart: unless-stopped
     volumes:
@@ -26,7 +26,7 @@ services:
       - monitoring
 
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:v3.9.1
     container_name: prometheus
     restart: unless-stopped
     volumes:
@@ -54,7 +54,7 @@ services:
       - reverse-proxy-network
   cadvisor:
     container_name: cadvisor
-    image: gcr.io/cadvisor/cadvisor:latest
+    image: gcr.io/cadvisor/cadvisor:v0.56.2
     command:
       - "-housekeeping_interval=10s"
       - "-docker_only=true"
@@ -71,7 +71,7 @@ services:
     devices:
       - "/dev/kmsg"
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:12.3.2
     environment:
       - GF_SERVER_ROOT_URL=https://grafana.oscarcorner.com/
     labels:
@@ -100,7 +100,7 @@ services:
       - SYS_ADMIN
     ports:
       - 9400:9400
-    image: nvcr.io/nvidia/k8s/dcgm-exporter:latest
+    image: nvcr.io/nvidia/k8s/dcgm-exporter:4.5.2-4.8.1
     networks:
       - monitoring
   nut-exporter:
@@ -120,7 +120,7 @@ services:
     networks:
       - monitoring
   vector:
-    image: timberio/vector:latest-alpine
+    image: timberio/vector:0.53.0-alpine
     container_name: vector
     command: --config /etc/vector/vector.toml
     volumes:

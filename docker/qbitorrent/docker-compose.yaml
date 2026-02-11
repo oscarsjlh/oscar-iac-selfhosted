@@ -32,7 +32,7 @@ services:
       - WIREGUARD_PRESHARED_KEY=${WIREGUARD_PRESHARED_KEY}
       - FIREWALL_VPN_INPUT_PORTS=6147
       - WIREGUARD_ADDRESSES=10.145.70.146/32
-    image: qmcgaw/gluetun:latest
+    image: qmcgaw/gluetun:v3.41.1
     networks:
       - reverse-proxy-network
     ports:
@@ -47,7 +47,7 @@ services:
       traefik.http.services.torrent.loadbalancer.server.port: 7979
       traefik.http.routers.torrent.tls.certresolver: route53
   qbittorrent:
-    image: linuxserver/qbittorrent:latest
+    image: linuxserver/qbittorrent:5.1.4-r2-ls440
     container_name: qbittorrent
     depends_on:
       - gluetun
@@ -63,7 +63,7 @@ services:
       - /mnt/main/downloads/:/downloads/
 
   radarr:
-    image: lscr.io/linuxserver/radarr:latest
+    image: lscr.io/linuxserver/radarr:6.0.4.10291
     container_name: radarr
     environment: *common-environment
     <<: [*reverse-proxy-network, *common-restart]
@@ -82,7 +82,7 @@ services:
       traefik.http.routers.radarr.tls.certresolver: route53
 
   prowlarr:
-    image: lscr.io/linuxserver/prowlarr:latest
+    image: lscr.io/linuxserver/prowlarr:2.3.0.5236
     container_name: prowlarr
     environment: *common-environment
     <<: [*reverse-proxy-network, *common-restart]
@@ -99,7 +99,7 @@ services:
       traefik.http.routers.prowlarr.tls.certresolver: route53
 
   sabnzbd:
-    image: lscr.io/linuxserver/sabnzbd:latest
+    image: lscr.io/linuxserver/sabnzbd:5.0.0-unstable
     container_name: sabnzbd
     depends_on:
       - gluetun
@@ -117,7 +117,7 @@ services:
       - /mnt/main/downloads/incomplete:/incomplete-downloads
 
   sonarr-anime:
-    image: lscr.io/linuxserver/sonarr:latest
+    image: lscr.io/linuxserver/sonarr:4.0.16.2944-ls302
     container_name: sonarr-anime
     environment: *common-environment
     <<: [*reverse-proxy-network, *common-restart]
@@ -139,7 +139,7 @@ services:
       - /mnt/main/downloads/usenet:/downloads/usenet # optional
 
   sonarr:
-    image: lscr.io/linuxserver/sonarr:latest
+    image: lscr.io/linuxserver/sonarr:4.0.16.2944-ls302
     container_name: sonarr
     environment: *common-environment
     <<: [*reverse-proxy-network, *common-restart]
@@ -159,7 +159,7 @@ services:
       - /mnt/main/downloads/torrent:/downloads/torrent
       - /mnt/main/downloads/usenet:/downloads/usenet # optional
   calibre:
-    image: lscr.io/linuxserver/calibre:latest
+    image: lscr.io/linuxserver/calibre:9.2.1
     container_name: calibre
     environment:
       - PUID=${PUID}
@@ -183,7 +183,7 @@ services:
       - ./configs/calibre-books:/oscar-lib
       - /mnt/nas/media/books:/books
   calibre-web:
-    image: lscr.io/linuxserver/calibre-web:latest
+    image: lscr.io/linuxserver/calibre-web:0.6.26-ls369
     container_name: calibre-web
     environment: *common-environment
     <<: [*reverse-proxy-network, *common-restart]
@@ -199,7 +199,7 @@ services:
       traefik.http.routers.calibre-web.tls.certresolver: route53
 
   bazarr:
-    image: lscr.io/linuxserver/bazarr:latest
+    image: lscr.io/linuxserver/bazarr:1.5.5
     container_name: bazarr
     environment: *common-environment
     <<: [*reverse-proxy-network, *common-restart]
@@ -217,7 +217,7 @@ services:
       traefik.http.services.bazarr.loadbalancer.server.port: 6767
       traefik.http.routers.bazarr.tls.certresolver: route53
   navidrome:
-    image: deluan/navidrome:latest
+    image: deluan/navidrome:0.60.3
     user: 1000:1000 # should be owner of volumes
     container_name: navidrome
     ports:
@@ -239,7 +239,7 @@ services:
       - "./configs/navidrome:/data"
       - "/mnt/nas/media/music:/music:ro"
   cleanuparr:
-    image: ghcr.io/cleanuparr/cleanuparr:latest
+    image: ghcr.io/cleanuparr/cleanuparr:v2.5.1
     container_name: cleanuparr
     restart: unless-stopped
     ports:
@@ -261,7 +261,7 @@ services:
       traefik.http.services.cleanuparr.loadbalancer.server.port: 11011
       traefik.http.routers.cleanuparr.tls.certresolver: route53
   huntarr:
-    image: huntarr/huntarr:latest
+    image: huntarr/huntarr:latest  # No versioned releases available
     container_name: huntarr
     restart: always
     ports:
@@ -279,7 +279,7 @@ services:
       traefik.http.services.huntarr.loadbalancer.server.port: 9705
       traefik.http.routers.huntarr.tls.certresolver: route53
   profilarr:
-    image: santiagosayshey/profilarr:latest # or :beta
+    image: santiagosayshey/profilarr:latest  # No versioned releases available, or :beta
     container_name: profilarr
     ports:
       - "6868:6868"
@@ -320,7 +320,7 @@ services:
       - /mnt/main/downloads/slskd:/books:ro
       - "/mnt/nas/media/music:/organized-music:rw"
     user: 1000:1000
-    image: slskd/slskd:latest
+    image: slskd/slskd:0.24.3.65534-f0362798
     <<: [*reverse-proxy-network, *common-restart]
   # Network definitions
 #

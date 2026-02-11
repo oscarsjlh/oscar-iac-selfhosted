@@ -1,6 +1,6 @@
 services:
   traefik:
-    image: traefik:latest # or traefik:v3.3 to pin a version
+    image: traefik:v3.6
     container_name: traefik
     restart: unless-stopped
     security_opt:
