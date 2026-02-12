@@ -31,3 +31,4 @@ jobs:
           token: '${{ steps.get_token.outputs.token }}'
         env:
           LOG_LEVEL: debug
+          RENOVATE_GIT_URL: 'https://x-access-token:${{ steps.get_token.outputs.token }}@github.com/'
