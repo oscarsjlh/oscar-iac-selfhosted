@@ -22,6 +22,9 @@
   "docker-compose": {
     "fileMatch": ["^docker/.+/docker-compose\\.ya?ml$"]
   },
+  "ignorePaths": [
+    "**/docker/immich/**"
+  ],
   "packageRules": [
     {
       "description": "Group all Docker Compose updates into a single PR",
