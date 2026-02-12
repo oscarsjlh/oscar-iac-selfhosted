@@ -8,7 +8,7 @@ volumes:
   grafana_storage: {}
 services:
   node-exporter:
-    image: prom/node-exporter:v1.10.2
+    image: prom/node-exporter:v1.10.2@sha256:3ac34ce007accad95afed72149e0d2b927b7e42fd1c866149b945b84737c62c3
     container_name: node-exporter
     restart: unless-stopped
     volumes:
@@ -26,7 +26,7 @@ services:
       - monitoring
 
   prometheus:
-    image: prom/prometheus:v3.9.1
+    image: prom/prometheus:v3.9.1@sha256:1f0f50f06acaceb0f5670d2c8a658a599affe7b0d8e78b898c1035653849a702
     container_name: prometheus
     restart: unless-stopped
     volumes:
@@ -54,7 +54,7 @@ services:
       - reverse-proxy-network
   cadvisor:
     container_name: cadvisor
-    image: ghcr.io/google/cadvisor:0.56.2
+    image: ghcr.io/google/cadvisor:0.56.2@sha256:5534ae91cbf3428998d60428d107cfdd97272d80658534ac6e54d8ce3b0c4d72
     command:
       - "-housekeeping_interval=10s"
       - "-docker_only=true"
@@ -71,7 +71,7 @@ services:
     devices:
       - "/dev/kmsg"
   grafana:
-    image: grafana/grafana:12.3.2
+    image: grafana/grafana:12.3.2@sha256:ba93c9d192e58b23e064c7f501d453426ccf4a85065bf25b705ab1e98602bfb1
     environment:
       - GF_SERVER_ROOT_URL=https://grafana.oscarcorner.com/
     labels:
@@ -105,7 +105,7 @@ services:
       - monitoring
   nut-exporter:
     # Stable v1
-    image: hon95/prometheus-nut-exporter:1
+    image: hon95/prometheus-nut-exporter:1@sha256:a9bfbbae3b12a6486e6e4b933a69a79d01342db27346d6b4cd5512f4eef6b111
     environment:
       - TZ=Europe/London
       - HTTP_PATH=/metrics
@@ -120,7 +120,7 @@ services:
     networks:
       - monitoring
   vector:
-    image: timberio/vector:0.53.0-alpine
+    image: timberio/vector:0.53.0-alpine@sha256:ca92d617e905953c3f852e7e88061f7039460e733522e3f0c21bc6ae946b2558
     container_name: vector
     command: --config /etc/vector/vector.toml
     volumes:
@@ -133,7 +133,7 @@ services:
     networks:
       - monitoring
   loki:
-    image: grafana/loki:2.9.4
+    image: grafana/loki:2.9.17@sha256:c4a25af6f2709fa625d88ee5df494a332a85f30e9575854031667823ecc5be04
     container_name: loki
     ports:
       - "3100:3100"
