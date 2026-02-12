@@ -32,7 +32,7 @@ services:
       - WIREGUARD_PRESHARED_KEY=${WIREGUARD_PRESHARED_KEY}
       - FIREWALL_VPN_INPUT_PORTS=6147
       - WIREGUARD_ADDRESSES=10.145.70.146/32
-    image: qmcgaw/gluetun:v3.41.1
+    image: qmcgaw/gluetun:v3.41.1@sha256:1a5bf4b4820a879cdf8d93d7ef0d2d963af56670c9ebff8981860b6804ebc8ab
     networks:
       - reverse-proxy-network
     ports:
@@ -47,7 +47,7 @@ services:
       traefik.http.services.torrent.loadbalancer.server.port: 7979
       traefik.http.routers.torrent.tls.certresolver: route53
   qbittorrent:
-    image: linuxserver/qbittorrent:5.1.4-r2-ls440
+    image: linuxserver/qbittorrent:5.1.4-r2-ls440@sha256:dfa75bc534ad4f36262f75b5c1d4c4f0ddd5e7ed5711ebc581c70920cce204ee
     container_name: qbittorrent
     depends_on:
       - gluetun
@@ -63,7 +63,7 @@ services:
       - /mnt/main/downloads/:/downloads/
 
   radarr:
-    image: lscr.io/linuxserver/radarr:6.0.4
+    image: lscr.io/linuxserver/radarr:6.0.4@sha256:f08dda38e7d12e5a722d9a5cb6e54acaf63c8598fefeefec88effe0c0d0038dd
     container_name: radarr
     environment: *common-environment
     <<: [*reverse-proxy-network, *common-restart]
@@ -82,7 +82,7 @@ services:
       traefik.http.routers.radarr.tls.certresolver: route53
 
   prowlarr:
-    image: lscr.io/linuxserver/prowlarr:2.3.0
+    image: lscr.io/linuxserver/prowlarr:2.3.0@sha256:e74a1e093dcc223d671d4b7061e2b4946f1989a4d3059654ff4e623b731c9134
     container_name: prowlarr
     environment: *common-environment
     <<: [*reverse-proxy-network, *common-restart]
@@ -99,7 +99,7 @@ services:
       traefik.http.routers.prowlarr.tls.certresolver: route53
 
   sabnzbd:
-    image: lscr.io/linuxserver/sabnzbd:5.0.0-unstable
+    image: lscr.io/linuxserver/sabnzbd:5.0.0-unstable@sha256:13b25a876b2bcf568cdd38032b0066d94bb69ae3a3abef6f5b91b907986c5b37
     container_name: sabnzbd
     depends_on:
       - gluetun
@@ -117,7 +117,7 @@ services:
       - /mnt/main/downloads/incomplete:/incomplete-downloads
 
   sonarr-anime:
-    image: lscr.io/linuxserver/sonarr:4.0.16
+    image: lscr.io/linuxserver/sonarr:4.0.16@sha256:6f73bbba33391a338e20d836a60c86beaf2a865a89b706b339fc8cb0b8ce1559
     container_name: sonarr-anime
     environment: *common-environment
     <<: [*reverse-proxy-network, *common-restart]
@@ -139,7 +139,7 @@ services:
       - /mnt/main/downloads/usenet:/downloads/usenet # optional
 
   sonarr:
-    image: lscr.io/linuxserver/sonarr:4.0.16
+    image: lscr.io/linuxserver/sonarr:4.0.16@sha256:6f73bbba33391a338e20d836a60c86beaf2a865a89b706b339fc8cb0b8ce1559
     container_name: sonarr
     environment: *common-environment
     <<: [*reverse-proxy-network, *common-restart]
@@ -159,7 +159,7 @@ services:
       - /mnt/main/downloads/torrent:/downloads/torrent
       - /mnt/main/downloads/usenet:/downloads/usenet # optional
   calibre:
-    image: lscr.io/linuxserver/calibre:9.2.1
+    image: lscr.io/linuxserver/calibre:9.2.1@sha256:e28679665f23d0f4c65f87b94aedba324e8355051643ca85b1dea402e02a1602
     container_name: calibre
     environment:
       - PUID=${PUID}
@@ -183,7 +183,7 @@ services:
       - ./configs/calibre-books:/oscar-lib
       - /mnt/nas/media/books:/books
   calibre-web:
-    image: lscr.io/linuxserver/calibre-web:0.6.26-ls369
+    image: lscr.io/linuxserver/calibre-web:0.6.26-ls369@sha256:95fa0d0d07bf1be2404236222a882a467431f34ee35ad29b6e7b3b4bca3b0376
     container_name: calibre-web
     environment: *common-environment
     <<: [*reverse-proxy-network, *common-restart]
@@ -199,7 +199,7 @@ services:
       traefik.http.routers.calibre-web.tls.certresolver: route53
 
   bazarr:
-    image: lscr.io/linuxserver/bazarr:1.5.5
+    image: lscr.io/linuxserver/bazarr:1.5.5@sha256:18ff732dffcebd559d15a91845fc3360d49652ea01dccfbfd98b8248ceb86e38
     container_name: bazarr
     environment: *common-environment
     <<: [*reverse-proxy-network, *common-restart]
@@ -217,7 +217,7 @@ services:
       traefik.http.services.bazarr.loadbalancer.server.port: 6767
       traefik.http.routers.bazarr.tls.certresolver: route53
   navidrome:
-    image: deluan/navidrome:0.60.3
+    image: deluan/navidrome:0.60.3@sha256:a5dce8f33304714dd138e870cca0dcab3d937ca236be1a9f2b97da009d1a0048
     user: 1000:1000 # should be owner of volumes
     container_name: navidrome
     ports:
@@ -239,7 +239,7 @@ services:
       - "./configs/navidrome:/data"
       - "/mnt/nas/media/music:/music:ro"
   cleanuparr:
-    image: ghcr.io/cleanuparr/cleanuparr:2.5.1
+    image: ghcr.io/cleanuparr/cleanuparr:2.5.1@sha256:47bb76b03676d5b9bb3c7a01f1a9005066d60db63b3f8379057d77f89daa6c37
     container_name: cleanuparr
     restart: unless-stopped
     ports:
@@ -261,7 +261,7 @@ services:
       traefik.http.services.cleanuparr.loadbalancer.server.port: 11011
       traefik.http.routers.cleanuparr.tls.certresolver: route53
   huntarr:
-    image: huntarr/huntarr:latest # No versioned releases available
+    image: huntarr/huntarr:latest@sha256:121d10ce379f5ce77d0091606192a7a603ffd97078eb196226f810b6f6bad00d # No versioned releases available
     container_name: huntarr
     restart: always
     ports:
@@ -279,7 +279,7 @@ services:
       traefik.http.services.huntarr.loadbalancer.server.port: 9705
       traefik.http.routers.huntarr.tls.certresolver: route53
   profilarr:
-    image: santiagosayshey/profilarr:latest # No versioned releases available, or :beta
+    image: santiagosayshey/profilarr:latest@sha256:8a514f8429cd33885166facc9eb6504fa9ded056c737609e5e8ef32ae0afb350 # No versioned releases available, or :beta
     container_name: profilarr
     ports:
       - "6868:6868"
@@ -320,7 +320,7 @@ services:
       - /mnt/main/downloads/slskd:/books:ro
       - "/mnt/nas/media/music:/organized-music:rw"
     user: 1000:1000
-    image: slskd/slskd:0.24.3.65534-f0362798
+    image: slskd/slskd:0.24.3.65534-f0362798@sha256:f3a13de5dd6a655dbcb53ca8a1468a7eedbe31d8a05012567a984c3e255bdea3
     <<: [*reverse-proxy-network, *common-restart]
   # Network definitions
 #

@@ -1,7 +1,7 @@
 services:
   linkding:
     container_name: "${LD_CONTAINER_NAME:-linkding}"
-    image: sissbruecker/linkding:1.45.0
+    image: sissbruecker/linkding:1.45.0@sha256:61b2eb9eed8e5772a473fb7f1f8923e046cb8cbbeb50e88150afd5ff287d4060
     volumes:
       - "${LD_HOST_DATA_DIR:-./data}:/etc/linkding/data"
     env_file:

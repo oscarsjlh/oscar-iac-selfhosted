@@ -9,7 +9,7 @@ services:
       traefik.http.routers.picard.rule: Host(`picard.oscarcorner.com`)
       traefik.http.services.picard.loadbalancer.server.port: 5800
       traefik.http.routers.picard.tls.certresolver: route53
-    image: mikenye/picard:2.13.3
+    image: mikenye/picard:2.13.3@sha256:8579fd6ca63e50463208cae7cdc8a0ca3504f5e7bdeb85c57441d5aac96030e3
     volumes:
       - "./config:/config:rw"
       - "/mnt/nas/media/music:/storage:rw"
