@@ -17,6 +17,7 @@
   "branchConcurrentLimit": 10,
   "prCreation": "immediate",
   "rebaseWhen": "behind-base-branch",
+  "gitUrl": "default",
   "enabledManagers": ["docker-compose"],
   "docker-compose": {
     "fileMatch": ["^docker/.+/docker-compose\\.ya?ml$"]
