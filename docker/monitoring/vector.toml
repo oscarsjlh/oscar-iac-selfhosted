@@ -49,17 +49,11 @@ inputs = ["parse_and_enrich"]
 source = '''
 .loki_labels = {
   "job": "docker",
-  "container": .container_name || "unknown",
-  "image": .image || "unknown",
-  "service": .labels.com_docker_compose_service || "unknown",
-  "project": .labels.com_docker_compose_project || "unknown",
-  "level": .level || "info"
-  "job": "docker",
   "container": .container_name ?? "unknown",
   "image": .image ?? "unknown",
   "service": .labels.com_docker_compose_service ?? "unknown",
   "project": .labels.com_docker_compose_project ?? "unknown",
-  "level": .level
+  "level": .level ?? "info"
 }
 '''
 

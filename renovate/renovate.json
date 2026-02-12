@@ -17,7 +17,6 @@
   "branchConcurrentLimit": 10,
   "prCreation": "immediate",
   "rebaseWhen": "behind-base-branch",
-  "recreateWhen": "always",
   "enabledManagers": ["docker-compose"],
   "docker-compose": {
     "fileMatch": ["^docker/.+/docker-compose\\.ya?ml$"]
@@ -37,7 +36,7 @@
       "description": "Separate major updates for manual review",
       "matchManagers": ["docker-compose"],
       "matchUpdateTypes": ["major"],
-      "groupName": "Docker images (major)",
+      "groupName": "Docker images - major",
       "automerge": false
     }
   ]

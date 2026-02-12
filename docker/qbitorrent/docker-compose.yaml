@@ -63,7 +63,7 @@ services:
       - /mnt/main/downloads/:/downloads/
 
   radarr:
-    image: lscr.io/linuxserver/radarr:6.0.4.10291
+    image: lscr.io/linuxserver/radarr:6.0.4
     container_name: radarr
     environment: *common-environment
     <<: [*reverse-proxy-network, *common-restart]
@@ -82,7 +82,7 @@ services:
       traefik.http.routers.radarr.tls.certresolver: route53
 
   prowlarr:
-    image: lscr.io/linuxserver/prowlarr:2.3.0.5236
+    image: lscr.io/linuxserver/prowlarr:2.3.0
     container_name: prowlarr
     environment: *common-environment
     <<: [*reverse-proxy-network, *common-restart]
@@ -117,7 +117,7 @@ services:
       - /mnt/main/downloads/incomplete:/incomplete-downloads
 
   sonarr-anime:
-    image: lscr.io/linuxserver/sonarr:4.0.16.2944-ls302
+    image: lscr.io/linuxserver/sonarr:4.0.16
     container_name: sonarr-anime
     environment: *common-environment
     <<: [*reverse-proxy-network, *common-restart]
@@ -139,7 +139,7 @@ services:
       - /mnt/main/downloads/usenet:/downloads/usenet # optional
 
   sonarr:
-    image: lscr.io/linuxserver/sonarr:4.0.16.2944-ls302
+    image: lscr.io/linuxserver/sonarr:4.0.16
     container_name: sonarr
     environment: *common-environment
     <<: [*reverse-proxy-network, *common-restart]
@@ -239,7 +239,7 @@ services:
       - "./configs/navidrome:/data"
       - "/mnt/nas/media/music:/music:ro"
   cleanuparr:
-    image: ghcr.io/cleanuparr/cleanuparr:v2.5.1
+    image: ghcr.io/cleanuparr/cleanuparr:2.5.1
     container_name: cleanuparr
     restart: unless-stopped
     ports:
@@ -261,7 +261,7 @@ services:
       traefik.http.services.cleanuparr.loadbalancer.server.port: 11011
       traefik.http.routers.cleanuparr.tls.certresolver: route53
   huntarr:
-    image: huntarr/huntarr:latest  # No versioned releases available
+    image: huntarr/huntarr:latest # No versioned releases available
     container_name: huntarr
     restart: always
     ports:
@@ -279,7 +279,7 @@ services:
       traefik.http.services.huntarr.loadbalancer.server.port: 9705
       traefik.http.routers.huntarr.tls.certresolver: route53
   profilarr:
-    image: santiagosayshey/profilarr:latest  # No versioned releases available, or :beta
+    image: santiagosayshey/profilarr:latest # No versioned releases available, or :beta
     container_name: profilarr
     ports:
       - "6868:6868"
