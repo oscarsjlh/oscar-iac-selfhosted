@@ -17,7 +17,7 @@ services:
       ATUIN_DB_URI: postgres://$ATUIN_DB_USERNAME:$ATUIN_DB_PASSWORD@db/$ATUIN_DB_NAME
       RUST_LOG: info,atuin_server=debug
   postgresql:
-    image: postgres:14@sha256:062b02051873a101837543675b5b4601cba06b1972d22f4b7969adbde5a280e4
+    image: postgres:14@sha256:473783dca8870bbde3a32370c72a9de9406f37d048c05d7b5c40f93e7c23d827
     restart: unless-stopped
     volumes: # Don't remove permanent storage for index database files!
       - "./database:/var/lib/postgresql/data/"

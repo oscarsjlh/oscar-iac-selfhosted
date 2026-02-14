@@ -117,7 +117,7 @@ services:
       - /mnt/main/downloads/incomplete:/incomplete-downloads
 
   sonarr-anime:
-    image: lscr.io/linuxserver/sonarr:4.0.16@sha256:6f73bbba33391a338e20d836a60c86beaf2a865a89b706b339fc8cb0b8ce1559
+    image: lscr.io/linuxserver/sonarr:4.0.16@sha256:37be832b78548e3f55f69c45b50e3b14d18df1b6def2a4994258217e67efb1a1
     container_name: sonarr-anime
     environment: *common-environment
     <<: [*reverse-proxy-network, *common-restart]
@@ -139,7 +139,7 @@ services:
       - /mnt/main/downloads/usenet:/downloads/usenet # optional
 
   sonarr:
-    image: lscr.io/linuxserver/sonarr:4.0.16@sha256:6f73bbba33391a338e20d836a60c86beaf2a865a89b706b339fc8cb0b8ce1559
+    image: lscr.io/linuxserver/sonarr:4.0.16@sha256:37be832b78548e3f55f69c45b50e3b14d18df1b6def2a4994258217e67efb1a1
     container_name: sonarr
     environment: *common-environment
     <<: [*reverse-proxy-network, *common-restart]
@@ -239,7 +239,7 @@ services:
       - "./configs/navidrome:/data"
       - "/mnt/nas/media/music:/music:ro"
   cleanuparr:
-    image: ghcr.io/cleanuparr/cleanuparr:2.5.1@sha256:47bb76b03676d5b9bb3c7a01f1a9005066d60db63b3f8379057d77f89daa6c37
+    image: ghcr.io/cleanuparr/cleanuparr:2.6.1@sha256:386d51d84749f41060ebe99fe3ba34772692a99c839eee19899653dd69d4fa37
     container_name: cleanuparr
     restart: unless-stopped
     ports:
@@ -261,7 +261,7 @@ services:
       traefik.http.services.cleanuparr.loadbalancer.server.port: 11011
       traefik.http.routers.cleanuparr.tls.certresolver: route53
   huntarr:
-    image: huntarr/huntarr:latest@sha256:121d10ce379f5ce77d0091606192a7a603ffd97078eb196226f810b6f6bad00d # No versioned releases available
+    image: huntarr/huntarr:latest@sha256:4dbab192dd25b68d31c445cf186113b910e527e0ac58552eacd16d4554a4c249 # No versioned releases available
     container_name: huntarr
     restart: always
     ports:
