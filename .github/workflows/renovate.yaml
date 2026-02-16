@@ -5,8 +5,8 @@ on:
       - main
   schedule:
     # Run daily at 3 AM UTC
-    - cron: '0 3 * * *'
-  workflow_dispatch:  # Allow manual triggers
+    - cron: "5 3 * * *"
+  workflow_dispatch: # Allow manual triggers
 
 jobs:
   renovate:
@@ -19,4 +19,4 @@ jobs:
         uses: renovatebot/github-action@v42.0.5
         with:
           configurationFile: renovate/renovate.json
-          token: '${{ secrets.RENOVATE_TOKEN }}'
+          token: "${{ secrets.RENOVATE_TOKEN }}"
