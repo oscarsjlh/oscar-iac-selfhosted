@@ -100,7 +100,7 @@ services:
       - SYS_ADMIN
     ports:
       - 9400:9400
-    image: nvcr.io/nvidia/k8s/dcgm-exporter:4.5.2-4.8.1-distroless
+    image: nvcr.io/nvidia/k8s/dcgm-exporter:4.5.2-4.8.1-distroless@sha256:ed594cf53fe6942e84b07b0740cdcbb249fa4b39cb21feeebf93881ae51f0b5e
     networks:
       - monitoring
   nut-exporter:
@@ -133,7 +133,7 @@ services:
     networks:
       - monitoring
   loki:
-    image: grafana/loki:2.9.17@sha256:c4a25af6f2709fa625d88ee5df494a332a85f30e9575854031667823ecc5be04
+    image: grafana/loki:3.6.5@sha256:847c287ada0e12603910589f42038c5cdaaad04e248bd1dc6c6e0920a235f427
     container_name: loki
     ports:
       - "3100:3100"
