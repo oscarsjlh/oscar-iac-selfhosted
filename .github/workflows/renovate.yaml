@@ -1,8 +1,5 @@
 name: Renovate
 on:
-  push:
-    branches:
-      - main
   schedule:
     # Run daily at 3 AM UTC
     - cron: "5 3 * * *"
