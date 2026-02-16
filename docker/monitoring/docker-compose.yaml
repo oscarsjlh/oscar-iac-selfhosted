@@ -100,7 +100,7 @@ services:
       - SYS_ADMIN
     ports:
       - 9400:9400
-    image: nvcr.io/nvidia/k8s/dcgm-exporter:4.5.2-4.8.1
+    image: nvcr.io/nvidia/k8s/dcgm-exporter:4.5.2-4.8.1-distroless
     networks:
       - monitoring
   nut-exporter:
