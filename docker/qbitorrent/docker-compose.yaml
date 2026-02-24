@@ -159,7 +159,7 @@ services:
       - /mnt/main/downloads/torrent:/downloads/torrent
       - /mnt/main/downloads/usenet:/downloads/usenet # optional
   calibre:
-    image: lscr.io/linuxserver/calibre:9.2.1@sha256:e28679665f23d0f4c65f87b94aedba324e8355051643ca85b1dea402e02a1602
+    image: lscr.io/linuxserver/calibre:9.3.1@sha256:4b91f11ba689ee72891360d625caf043b04541e1c4ab0723ed3e377123c579c8
     container_name: calibre
     environment:
       - PUID=${PUID}
@@ -239,7 +239,7 @@ services:
       - "./configs/navidrome:/data"
       - "/mnt/nas/media/music:/music:ro"
   cleanuparr:
-    image: ghcr.io/cleanuparr/cleanuparr:2.6.3@sha256:0d18e5dedbc376e48c449286f08460a9d76fb4fa842eff93f863ca120c97ea97
+    image: ghcr.io/cleanuparr/cleanuparr:2.7.0@sha256:87a79ad5598240bbd1a16ebf8476e0a702140bb34d9ff64ccfa5f65780ee9cd4
     container_name: cleanuparr
     restart: unless-stopped
     ports:
@@ -261,7 +261,7 @@ services:
       traefik.http.services.cleanuparr.loadbalancer.server.port: 11011
       traefik.http.routers.cleanuparr.tls.certresolver: route53
   huntarr:
-    image: huntarr/huntarr:latest@sha256:69e550bf82da22b1c2846cdb6c2a7b3bc0f45ab078794cc38046181ba5c1a6a3 # No versioned releases available
+    image: huntarr/huntarr:latest@sha256:95e88b2595f71b1ec2e158a3b9461c573e192928c51ac2b0d9675f33d4cdba15 # No versioned releases available
     container_name: huntarr
     restart: always
     ports:
