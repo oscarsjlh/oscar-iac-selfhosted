@@ -2,11 +2,9 @@ services:
   atuin:
     restart: always
     image: ghcr.io/atuinsh/atuin:v18.12.0@sha256:e953fa9e36ef571d3cb2f9746426129025b8101ad4b88cd0da6783d524cca431
-    command: server start
+    command: start
     volumes:
       - "./config:/config"
-    links:
-      - postgresql:db
     ports:
       - 8888:8888
     environment:
@@ -14,10 +12,12 @@ services:
       PGID: 1000
       ATUIN_HOST: "0.0.0.0"
       ATUIN_OPEN_REGISTRATION: "true"
-      ATUIN_DB_URI: postgres://$ATUIN_DB_USERNAME:$ATUIN_DB_PASSWORD@db/$ATUIN_DB_NAME
+      ATUIN_DB_URI: postgres://${ATUIN_DB_USERNAME}:${ATUIN_DB_PASSWORD}@postgresql/${ATUIN_DB_NAME}
       RUST_LOG: info,atuin_server=debug
+    depends_on:
+      - postgresql
   postgresql:
-    image: postgres:18@sha256:b6b4d0b75c699a2c94dfc5a94fe09f38630f3b67ab0e1653ede1b7ac8e13c197
+    image: postgres:14
     restart: unless-stopped
     volumes: # Don't remove permanent storage for index database files!
       - "./database:/var/lib/postgresql/data/"
