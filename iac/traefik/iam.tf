@@ -36,18 +36,6 @@ data "aws_iam_policy_document" "this" {
     effect    = "Allow"
     actions   = ["route53:ChangeResourceRecordSets"]
     resources = ["arn:aws:route53:::hostedzone/${var.zoneid}"]
-
-    condition {
-      test     = "ForAllValues:StringEquals"
-      variable = "route53:ChangeResourceRecordSetsNormalizedRecordNames"
-      values   = ["_acme-challenge.oscarcorner.com"]
-    }
-
-    condition {
-      test     = "ForAllValues:StringEquals"
-      variable = "route53:ChangeResourceRecordSetsRecordTypes"
-      values   = ["TXT"]
-    }
   }
 }
 
