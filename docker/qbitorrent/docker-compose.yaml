@@ -63,7 +63,7 @@ services:
       - /mnt/main/downloads:/downloads
 
   radarr:
-    image: lscr.io/linuxserver/radarr:6.0.4@sha256:a360633a3682d41e96f71a07ff36ecbdf2394a9628465b84b0a8437087715b41
+    image: lscr.io/linuxserver/radarr:6.0.4@sha256:ca43905eaf2dd11425efdcfe184892e43806b1ae0a830440c825cecbc2629cfb
     container_name: radarr
     environment: *common-environment
     <<: [*reverse-proxy-network, *common-restart]
@@ -82,7 +82,7 @@ services:
       traefik.http.routers.radarr.tls.certresolver: route53
 
   prowlarr:
-    image: lscr.io/linuxserver/prowlarr:2.3.0@sha256:e74a1e093dcc223d671d4b7061e2b4946f1989a4d3059654ff4e623b731c9134
+    image: lscr.io/linuxserver/prowlarr:2.3.0@sha256:a8fe7b9c502f979146b6d0f22438b825c38e068241bb8a708c473062dffdbb03
     container_name: prowlarr
     environment: *common-environment
     <<: [*reverse-proxy-network, *common-restart]
@@ -99,7 +99,7 @@ services:
       traefik.http.routers.prowlarr.tls.certresolver: route53
 
   sabnzbd:
-    image: lscr.io/linuxserver/sabnzbd:5.0.0-unstable@sha256:221ac2144e9dab7aac29f04c67bb5e331f88683bd317ac72f98d8c7e9ffdb722
+    image: lscr.io/linuxserver/sabnzbd:5.0.0-unstable@sha256:a2ec1ec70e78b31b8577d57d578240a4b12a2ce710ab283810967c42aea1eddf
     container_name: sabnzbd
     depends_on:
       - gluetun
@@ -117,7 +117,7 @@ services:
       - /mnt/main/downloads/incomplete:/incomplete-downloads
 
   sonarr-anime:
-    image: lscr.io/linuxserver/sonarr:4.0.16@sha256:37be832b78548e3f55f69c45b50e3b14d18df1b6def2a4994258217e67efb1a1
+    image: lscr.io/linuxserver/sonarr:4.0.16@sha256:21c1c3d52248589bb064f5adafec18cad45812d7a01d317472955eef051e619b
     container_name: sonarr-anime
     environment: *common-environment
     <<: [*reverse-proxy-network, *common-restart]
@@ -139,7 +139,7 @@ services:
       - /mnt/main/downloads/usenet:/downloads/usenet # optional
 
   sonarr:
-    image: lscr.io/linuxserver/sonarr:4.0.16@sha256:37be832b78548e3f55f69c45b50e3b14d18df1b6def2a4994258217e67efb1a1
+    image: lscr.io/linuxserver/sonarr:4.0.16@sha256:21c1c3d52248589bb064f5adafec18cad45812d7a01d317472955eef051e619b
     container_name: sonarr
     environment: *common-environment
     <<: [*reverse-proxy-network, *common-restart]
@@ -199,7 +199,7 @@ services:
       traefik.http.routers.calibre-web.tls.certresolver: route53
 
   bazarr:
-    image: lscr.io/linuxserver/bazarr:1.5.6@sha256:b0bc617664dbca25845ac3b1bb6411b145b6a44a6d173071c9d2f426524fdd9f
+    image: lscr.io/linuxserver/bazarr:1.5.6@sha256:94eee5e3e14430b7b144d4556be73963a7daf6f1bddc25586627f426465482ce
     container_name: bazarr
     environment: *common-environment
     <<: [*reverse-proxy-network, *common-restart]
@@ -239,7 +239,7 @@ services:
       - "./configs/navidrome:/data"
       - "/mnt/nas/media/music:/music:ro"
   cleanuparr:
-    image: ghcr.io/cleanuparr/cleanuparr:2.7.6@sha256:27cb25047206cab9ec2737e5d8cf840b88c5b6067c63c1bbcf2e1820129aa516
+    image: ghcr.io/cleanuparr/cleanuparr:2.7.7@sha256:7701be7b364b2ac2097ff13b80f2d3e98de0f51ac331743b4ea0291fccd57692
     container_name: cleanuparr
     restart: unless-stopped
     ports:
