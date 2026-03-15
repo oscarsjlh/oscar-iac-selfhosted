@@ -5,6 +5,55 @@ type = "docker_logs"
 type = "journald"
 since_now = false
 
+[sources.syslog]
+type = "syslog"
+mode = "udp"
+address = "0.0.0.0:514"
+
+
+[transforms.syslog_parse]
+type = "remap"
+inputs = ["syslog"]
+source = '''
+# Extract fields from syslog
+.source_host = .hostname
+.app_name = .appname || "unknown"
+.facility = .facility || "unknown"
+.severity = .severity || "info"
+.message = string!(.message)
+
+# Map severity to log level
+.level = if .severity == 0 {
+  "emergency"
+} else if .severity == 1 {
+  "alert"
+} else if .severity == 2 {
+  "critical"
+} else if .severity == 3 {
+  "error"
+} else if .severity == 4 {
+  "warning"
+} else if .severity == 5 {
+  "notice"
+} else if .severity == 6 {
+  "info"
+} else {
+  "debug"
+}
+'''
+
+[transforms.syslog_labels]
+type = "remap"
+inputs = ["syslog_parse"]
+source = '''
+.loki_labels = {
+  "job": "syslog",
+  "host": .source_host,
+  "app": .app_name,
+  "facility": .facility,
+  "level": .level
+}
+'''
 
 [transforms.normalize]
 type = "remap"
@@ -15,6 +64,14 @@ source = '''
 .host = get_hostname!()
 .unit = ._SYSTEMD_UNIT || "unknown"
 .level = .PRIORITY || "unknown"
+.syslog_identifier = .SYSLOG_IDENTIFIER || "unknown"
+
+# Identify if this is a cron-related job
+.is_cron = if match(string!(.unit), r'^(cron|.*\.timer)') || match(string!(.syslog_identifier), r'(CRON|cron)') {
+  "true"
+} else {
+  "false"
+}
 '''
 
 [transforms.journald_labels]
@@ -25,7 +82,9 @@ source = '''
   "job": "systemd",
   "host": .host,
   "unit": .unit,
-  "level": .level
+  "level": .level,
+  "is_cron": .is_cron,
+  "syslog_identifier": .syslog_identifier
 }
 '''
 
@@ -47,13 +106,24 @@ del(.label)
 type = "remap"
 inputs = ["parse_and_enrich"]
 source = '''
+.service = if exists(.labels."com.docker.compose.service") {
+  string!(.labels."com.docker.compose.service")
+} else {
+  "unknown"
+}
+.project = if exists(.labels."com.docker.compose.project") {
+  string!(.labels."com.docker.compose.project")
+} else {
+  "unknown"
+}
+
 .loki_labels = {
   "job": "docker",
-  "container": .container_name ?? "unknown",
-  "image": .image ?? "unknown",
-  "service": .labels.com_docker_compose_service ?? "unknown",
-  "project": .labels.com_docker_compose_project ?? "unknown",
-  "level": .level ?? "info"
+  "container": .container_name,
+  "image": .image,
+  "service": .service,
+  "project": .project,
+  "level": .level
 }
 '''
 
@@ -64,8 +134,8 @@ target = "stdout"
 encoding.codec = "json"
 [sinks.loki]
 type = "loki"
-inputs = ["journald_labels", "docker_labels"]  # or whatever your last transform is
-endpoint = "http://loki:3100"   # <-- adjust if Loki is at a different address
+inputs = ["journald_labels", "docker_labels", "syslog_labels"]
+endpoint = "http://loki:3100"
 compression = "gzip"
 encoding.codec = "json"
 

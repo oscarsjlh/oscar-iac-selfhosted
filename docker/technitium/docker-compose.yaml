@@ -9,6 +9,7 @@ services:
     # network_mode: "host"
     ports:
       - "5380:5380/tcp"
+      - "53443:53443/tcp"
       - "8053:8053/tcp"
       - "53:53/udp" #DNS service
       - "53:53/tcp" #DNS service
