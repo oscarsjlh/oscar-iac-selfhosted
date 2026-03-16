@@ -1,7 +1,7 @@
 services:
   redis:
     container_name: redis
-    image: docker.io/valkey/valkey:8-alpine
+    image: docker.io/valkey/valkey:8-alpine@sha256:cb3339abbd6e18942cd8ac3349f0c371a82ba5b6204b242563ba299e7956cbd0
     command: valkey-server --save 30 1 --loglevel warning
     restart: unless-stopped
     networks:
@@ -16,7 +16,7 @@ services:
 
   searxng:
     container_name: searxng
-    image: docker.io/searxng/searxng:latest
+    image: docker.io/searxng/searxng:latest@sha256:174f6a8498d88d2d98c265a952c2d552859bf315cd505746d1c0d4fbec37952f
     restart: unless-stopped
     networks:
       - reverse-proxy-network

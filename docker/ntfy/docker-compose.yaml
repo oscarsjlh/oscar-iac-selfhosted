@@ -8,7 +8,7 @@
 
 services:
   ntfy:
-    image: binwiederhier/ntfy:v2.18.0@sha256:bf4b67bea925d80e8400ae2997111c933772c8c5f16d7b49f33aa2d27d837098
+    image: binwiederhier/ntfy:v2.19.1@sha256:6701649211b15fd9dee1dd513f29901f9bf14f450290703a7c9f6c01e1981196
     container_name: ntfy
     networks:
       - reverse-proxy-network
