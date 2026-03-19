@@ -208,7 +208,7 @@ services:
     volumes:
       - ./configs/bazarr:/config
       - /mnt/nas/media/movies:/movies
-      - /mnt/nas/media/shows/anime-shows:/tv
+      - /mnt/nas/media/anime-shows:/tv
     labels:
       traefik.enable: true
       # increase readingTimeouts for the entrypoint used here
