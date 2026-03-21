@@ -1,0 +1,32 @@
+services:
+  registry:
+    image: registry:3.0.0
+    container_name: registry
+    restart: unless-stopped
+    environment:
+      - REGISTRY_HTTP_ADDR=:5000
+      - REGISTRY_HTTP_TLS_CERTFILE=/certs/domain.crt
+      - REGISTRY_HTTP_TLS_KEYFILE=/certs/domain.key
+    volumes:
+      - ./registry/certs:/certs
+      - registry-data:/var/lib/registry
+    networks:
+      - reverse-proxy-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.registry.entrypoints=websecure"
+      - "traefik.http.routers.registry.rule=Host(`registry.oscarcorner.com`)"
+      - "traefik.http.routers.registry.service=registry-service"
+      - "traefik.http.routers.registry.tls=true"
+      - "traefik.http.routers.registry.tls.certresolver=route53"
+      - "traefik.http.routers.registry.tls.domains[0].main=oscarcorner.com"
+      - "traefik.http.routers.registry.tls.domains[0].sans=*.oscarcorner.com"
+      - "traefik.http.services.registry-service.loadbalancer.server.port=5000"
+
+volumes:
+  registry-data:
+
+networks:
+  reverse-proxy-network:
+    external: true
+

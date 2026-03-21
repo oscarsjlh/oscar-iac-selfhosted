@@ -1,0 +1,64 @@
+services:
+  # Frontend - Caddy web server serving static files and proxying API requests
+  frontend:
+    image: registry.oscarcorner.com/ytdw-frontend
+    ports:
+      - "8082:80"
+    environment:
+      - BACKEND_URL=http://backend:8081
+    container_name: yt-dlp-frontend
+    labels:
+      traefik.enable: true
+      # increase readingTimeouts for the entrypoint used here
+      traefik.http.routers.yt-dw.entrypoints: websecure
+      traefik.http.routers.yt-dw.rule: Host(`yt-dw.oscarcorner.com`)
+      traefik.http.services.yt-dw.loadbalancer.server.port: 80
+      traefik.http.routers.yt-dw.tls.certresolver: route53
+
+    depends_on:
+      - backend
+    networks:
+      - reverse-proxy-network
+    restart: unless-stopped
+
+  # Backend - API and WebSocket server (distroless image)
+  backend:
+    image: registry.oscarcorner.com/ytdw-backend
+    group_add:
+      - 971
+    environment:
+      - YT_DLP_DOWNLOAD_DIR=/downloads
+      - YT_DLP_MAX_CONCURRENT=3
+      - YT_DLP_IMAGE=yt-dlp-worker:latest
+      - YT_DLP_VOLUME_NAME=downloads
+    volumes:
+      - downloads:/downloads
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - docker-config:/home/nonroot/.docker
+    container_name: ytdlp-backend
+    networks:
+      - reverse-proxy-network
+    restart: unless-stopped
+
+  # yt-dlp worker (used by backend via docker run)
+  # This service is built but not run directly - backend spawns containers from this image
+  ytdlp-worker:
+    image: registry.oscarcorner.com/yt-dlp-worker
+    networks:
+      - reverse-proxy-network
+    volumes:
+      - downloads:/downloads
+    # This container doesn't run continuously - it's used as a base image
+    # Backend spawns new containers from this image for each download
+    command: ["echo", "Worker image ready"]
+
+volumes:
+  downloads:
+    name: downloads
+    driver: local
+  docker-config:
+    driver: local
+
+networks:
+  reverse-proxy-network:
+    external: true
