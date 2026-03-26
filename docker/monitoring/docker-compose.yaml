@@ -120,7 +120,7 @@ services:
     networks:
       - monitoring
   vector:
-    image: timberio/vector:0.54.X-debian
+    image: timberio/vector:0.54.X-debian@sha256:7311e050492a452b762d82488b0dd26312c3099b7274e4300c6c01b6e9f9c6d9
     container_name: vector
     command: --config /etc/vector/vector.toml
     volumes:
