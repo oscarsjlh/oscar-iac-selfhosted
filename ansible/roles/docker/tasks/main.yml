@@ -2,33 +2,18 @@
 ---
 # tasks file for docker
 #
-- name: Ensure docker volume group exists with correct GID
-  become: yes
-  group:
-    name: "{{ docker_volume_group }}"
-    gid: "{{ docker_volume_gid }}"
-    state: present
-
-- name: Ensure oscar user exists and is in docker group
-  become: yes
-  user:
-    name: "{{ docker_volume_owner }}"
-    groups: "docker,{{ docker_volume_group }}"
-    append: yes
-    state: present
-
 - name: Find local docker service directories
   delegate_to: localhost
   run_once: true
   find:
-    paths: "/home/oscar/projects/iac/docker/"
+    paths: "{{ docker_compose_path }}"
     recurse: no
     file_type: directory
   register: local_docker_compose
 
 - name: Create docker service directories on remote
   file:
-    path: "{{ (item.path | split('/'))[6] }}"
+    path: "{{ item.path | basename }}"
     state: directory
     owner: "{{ docker_volume_owner }}"
     group: "{{ docker_volume_group }}"
@@ -36,7 +21,7 @@
 - name: Copy all docker files and folders to remote
   copy:
     src: "{{ item.path }}/"
-    dest: "{{ (item.path | split('/'))[6] }}/"
+    dest: "{{ item.path | basename }}/"
     mode: preserve
     owner: "{{ docker_volume_owner }}"
     group: "{{ docker_volume_group }}"
@@ -45,7 +30,7 @@
 
 - name: Ensure docker volumes have correct permissions with GID 1000
   file:
-    path: "{{ (item.path | split('/'))[6] }}"
+    path: "{{ item.path | basename }}"
     owner: "{{ docker_volume_owner }}"
     group: "{{ docker_volume_gid }}"
     mode: "0755"
@@ -54,7 +39,7 @@
 
 - name: Set docker-compose files to 600 permissions
   file:
-    path: "{{ (item.path | split('/'))[6] }}/docker-compose.yaml"
+    path: "{{ item.path | basename }}/docker-compose.yaml"
     owner: "{{ docker_volume_owner }}"
     group: "{{ docker_volume_group }}"
     mode: "0600"
@@ -63,7 +48,7 @@
 
 - name: Find shell scripts in docker directories
   find:
-    paths: "{{ (item.path | split('/'))[6] }}"
+    paths: "{{ item.path | basename }}"
     patterns: "*.sh"
     recurse: true
   loop: "{{ local_docker_compose.files }}"
@@ -80,7 +65,7 @@
   when: shell_scripts.results is defined
 - name: Run docker compose up
   community.docker.docker_compose_v2:
-    project_src: "{{ (item.path | split('/'))[6] }}"
+    project_src: "{{ item.path | basename }}"
     remove_orphans: true
     remove_volumes: true
   loop: "{{ local_docker_compose.files }}"
@@ -91,5 +76,5 @@
 
 - name: Print
   ansible.builtin.debug:
-    msg: path "{{ (item.path | split('/'))[6] }}/docker-compose.yaml, {{ item.path }}"
+    msg: path "{{ item.path | basename }}/docker-compose.yaml, {{ item.path }}"
   loop: "{{ local_docker_compose.files }}"
