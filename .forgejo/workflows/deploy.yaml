@@ -8,15 +8,18 @@ on:
 jobs:
   deploy:
     runs-on: ci
-    container:
-      image: registry.oscarcorner.com/oscar/ansible-ci:1.0.0
     env:
       ANSIBLE_FORCE_COLOR: "true"
       PY_COLORS: "1"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
+      - name: Setup Ansible
+        run: |
+          apt-get update
+          apt-get install -y ansible
+      - name: Install Ansible Collections
+        run: ansible-galaxy collection install -r ansible/requirements.yml
       - name: Configure SSH
         run: |
           mkdir -p ~/.ssh
@@ -25,22 +28,22 @@ jobs:
           chmod 600 ~/.ssh/deploy_key
           # Determine key type and rename appropriately
           if head -1 ~/.ssh/deploy_key | grep -q "ed25519\|ED25519"; then
-            mv ~/.ssh/deploy_key ~/.ssh/id_ed25519
-            chmod 600 ~/.ssh/id_ed25519
-            KEY_FILE="~/.ssh/id_ed25519"
+          mv ~/.ssh/deploy_key ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          KEY_FILE="~/.ssh/id_ed25519"
           else
-            mv ~/.ssh/deploy_key ~/.ssh/id_rsa
-            chmod 600 ~/.ssh/id_rsa
-            KEY_FILE="~/.ssh/id_rsa"
+          mv ~/.ssh/deploy_key ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          KEY_FILE="~/.ssh/id_rsa"
           fi
           # Create SSH config with explicit user
           cat > ~/.ssh/config << EOF
           Host laptop.oscarcorner.com
-            HostName laptop.oscarcorner.com
-            User ci
-            IdentityFile ${KEY_FILE}
-            StrictHostKeyChecking no
-            UserKnownHostsFile /dev/null
+          HostName laptop.oscarcorner.com
+          User ci
+          IdentityFile ${KEY_FILE}
+          StrictHostKeyChecking no
+          UserKnownHostsFile /dev/null
           EOF
           chmod 600 ~/.ssh/config
 
