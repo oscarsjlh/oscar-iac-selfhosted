@@ -1,4 +1,5 @@
-- hosts: main
+- hosts: remote
+  become: yes
   roles:
     - docker
     

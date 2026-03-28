@@ -1,5 +1,18 @@
-[main]
-media
+[local]
+media ansible_connection=local ansible_user=oscar
+
+[remote]
 laptop.oscarcorner.com ansible_user=ci
+
+# Combined group for when you want to target both
+[all:children]
+local
+remote
+
+# Main production servers
+[main]
+laptop.oscarcorner.com
+
+# For update operations
 [updates]
 laptop.oscarcorner.com ansible_user=ci

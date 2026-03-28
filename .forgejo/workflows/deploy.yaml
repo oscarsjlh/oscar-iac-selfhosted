@@ -8,17 +8,14 @@ on:
 jobs:
   deploy:
     runs-on: ci
+    container:
+      image: registry.oscarcorner.com/oscar/ansible-ci:latest
+    env:
+      ANSIBLE_FORCE_COLOR: "true"
+      PY_COLORS: "1"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Setup Ansible
-        run: |
-          apt-get update
-          apt-get install -y ansible
-
-      - name: Install Ansible Collections
-        run: ansible-galaxy collection install -r ansible/requirements.yml
 
       - name: Configure SSH
         run: |
