@@ -9,3 +9,7 @@ docker_volume_gid: 1000
 # Path to docker compose directories - can be absolute or relative
 # Default assumes running from repo root where ansible/ is a subdirectory
 docker_compose_path: "{{ playbook_dir | dirname }}/docker"
+
+# Where to deploy docker compose projects on the remote server
+# Set to /home/oscar so apps deploy as /home/oscar/app-name
+docker_deploy_path: "/home/{{ docker_volume_owner }}"

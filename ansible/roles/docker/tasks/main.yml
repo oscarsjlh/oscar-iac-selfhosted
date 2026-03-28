@@ -11,10 +11,19 @@
     file_type: directory
   register: local_docker_compose
 
+- name: Ensure docker deploy base directory exists
+  become: yes
+  file:
+    path: "{{ docker_deploy_path }}"
+    state: directory
+    owner: "{{ docker_volume_owner }}"
+    group: "{{ docker_volume_group }}"
+    mode: "0755"
+
 - name: Create docker service directories on remote
   become: yes
   file:
-    path: "{{ item.path | basename }}"
+    path: "{{ docker_deploy_path }}/{{ item.path | basename }}"
     state: directory
     owner: "{{ docker_volume_owner }}"
     group: "{{ docker_volume_group }}"
@@ -23,7 +32,7 @@
   become: yes
   copy:
     src: "{{ item.path }}/"
-    dest: "{{ item.path | basename }}/"
+    dest: "{{ docker_deploy_path }}/{{ item.path | basename }}/"
     mode: preserve
     owner: "{{ docker_volume_owner }}"
     group: "{{ docker_volume_group }}"
@@ -33,7 +42,7 @@
 - name: Ensure docker volumes have correct permissions with GID 1000
   become: yes
   file:
-    path: "{{ item.path | basename }}"
+    path: "{{ docker_deploy_path }}/{{ item.path | basename }}"
     owner: "{{ docker_volume_owner }}"
     group: "{{ docker_volume_gid }}"
     mode: "0755"
@@ -43,7 +52,7 @@
 - name: Set docker-compose files to 600 permissions
   become: yes
   file:
-    path: "{{ item.path | basename }}/docker-compose.yaml"
+    path: "{{ docker_deploy_path }}/{{ item.path | basename }}/docker-compose.yaml"
     owner: "{{ docker_volume_owner }}"
     group: "{{ docker_volume_group }}"
     mode: "0600"
@@ -53,7 +62,7 @@
 - name: Find shell scripts in docker directories
   become: yes
   find:
-    paths: "{{ item.path | basename }}"
+    paths: "{{ docker_deploy_path }}/{{ item.path | basename }}"
     patterns: "*.sh"
     recurse: true
   loop: "{{ local_docker_compose.files }}"
@@ -73,7 +82,7 @@
   become: yes
   become_user: "{{ docker_volume_owner }}"
   community.docker.docker_compose_v2:
-    project_src: "{{ item.path | basename }}"
+    project_src: "{{ docker_deploy_path }}/{{ item.path | basename }}"
     remove_orphans: true
     remove_volumes: true
   loop: "{{ local_docker_compose.files }}"
@@ -84,5 +93,5 @@
 
 - name: Print
   ansible.builtin.debug:
-    msg: path "{{ item.path | basename }}/docker-compose.yaml, {{ item.path }}"
+    msg: path "{{ docker_deploy_path }}/{{ item.path | basename }}/docker-compose.yaml"
   loop: "{{ local_docker_compose.files }}"
