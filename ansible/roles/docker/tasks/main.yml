@@ -12,6 +12,7 @@
   register: local_docker_compose
 
 - name: Create docker service directories on remote
+  become: yes
   file:
     path: "{{ item.path | basename }}"
     state: directory
@@ -19,6 +20,7 @@
     group: "{{ docker_volume_group }}"
   loop: "{{ local_docker_compose.files }}"
 - name: Copy all docker files and folders to remote
+  become: yes
   copy:
     src: "{{ item.path }}/"
     dest: "{{ item.path | basename }}/"
@@ -29,6 +31,7 @@
   loop: "{{ local_docker_compose.files }}"
 
 - name: Ensure docker volumes have correct permissions with GID 1000
+  become: yes
   file:
     path: "{{ item.path | basename }}"
     owner: "{{ docker_volume_owner }}"
@@ -38,6 +41,7 @@
   loop: "{{ local_docker_compose.files }}"
 
 - name: Set docker-compose files to 600 permissions
+  become: yes
   file:
     path: "{{ item.path | basename }}/docker-compose.yaml"
     owner: "{{ docker_volume_owner }}"
@@ -47,6 +51,7 @@
   ignore_errors: yes
 
 - name: Find shell scripts in docker directories
+  become: yes
   find:
     paths: "{{ item.path | basename }}"
     patterns: "*.sh"
@@ -56,6 +61,7 @@
   ignore_errors: true
 
 - name: Ensure shell scripts are executable
+  become: yes
   file:
     path: "{{ item.path }}"
     mode: "0755"
@@ -64,6 +70,8 @@
   loop: "{{ shell_scripts.results | selectattr('files', 'defined') | map(attribute='files') | flatten }}"
   when: shell_scripts.results is defined
 - name: Run docker compose up
+  become: yes
+  become_user: "{{ docker_volume_owner }}"
   community.docker.docker_compose_v2:
     project_src: "{{ item.path | basename }}"
     remove_orphans: true

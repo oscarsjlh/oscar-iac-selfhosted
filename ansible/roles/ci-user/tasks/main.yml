@@ -21,6 +21,16 @@
     name: "{{ ci_user_name }}"
     password: "*"
 
+- name: Configure passwordless sudo for CI user
+  become: yes
+  template:
+    src: sudoers.j2
+    dest: "/etc/sudoers.d/{{ ci_user_name }}"
+    mode: "0440"
+    owner: root
+    group: root
+    validate: 'visudo -cf %s'
+
 - name: Create .ssh directory for CI user
   become: yes
   become_method: sudo
