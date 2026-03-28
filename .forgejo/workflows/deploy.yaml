@@ -17,6 +17,9 @@ jobs:
           apt-get update
           apt-get install -y ansible
 
+      - name: Install Ansible Collections
+        run: ansible-galaxy collection install -r ansible/requirements.yml
+
       - name: Configure SSH
         run: |
           mkdir -p ~/.ssh
