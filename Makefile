@@ -29,7 +29,7 @@ update: deploy_pull deploy_updates
 
 # CI Docker image
 REGISTRY = registry.oscarcorner.com
-CI_IMAGE = $(REGISTRY)/oscar/ansible-ci:latest
+CI_IMAGE = $(REGISTRY)/oscar/ansible-ci:1.0.0
 
 build_ci_image:
 	docker build -t $(CI_IMAGE) -f Dockerfile.ci .

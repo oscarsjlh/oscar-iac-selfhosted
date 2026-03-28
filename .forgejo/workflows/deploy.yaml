@@ -9,7 +9,7 @@ jobs:
   deploy:
     runs-on: ci
     container:
-      image: registry.oscarcorner.com/oscar/ansible-ci:latest
+      image: registry.oscarcorner.com/oscar/ansible-ci:1.0.0
     env:
       ANSIBLE_FORCE_COLOR: "true"
       PY_COLORS: "1"
