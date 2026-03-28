@@ -1,0 +1,11 @@
+#SPDX-License-Identifier: MIT-0
+---
+# defaults file for ci-user
+
+ci_user_name: "ci"
+ci_user_home: "/home/ci"
+ci_user_shell: "/bin/bash"
+ci_user_groups: "docker,wheel"
+ci_ssh_key_type: "ed25519"
+ci_ssh_key_file: "id_ed25519"
+ci_ssh_comment: "ci@{{ inventory_hostname }}"

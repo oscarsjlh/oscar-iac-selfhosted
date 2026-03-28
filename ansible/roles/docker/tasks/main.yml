@@ -2,6 +2,21 @@
 ---
 # tasks file for docker
 #
+- name: Ensure docker volume group exists with correct GID
+  become: yes
+  group:
+    name: "{{ docker_volume_group }}"
+    gid: "{{ docker_volume_gid }}"
+    state: present
+
+- name: Ensure oscar user exists and is in docker group
+  become: yes
+  user:
+    name: "{{ docker_volume_owner }}"
+    groups: "docker,{{ docker_volume_group }}"
+    append: yes
+    state: present
+
 - name: Find local docker service directories
   delegate_to: localhost
   run_once: true
@@ -10,34 +25,38 @@
     recurse: no
     file_type: directory
   register: local_docker_compose
+
 - name: Create docker service directories on remote
   file:
     path: "{{ (item.path | split('/'))[6] }}"
     state: directory
+    owner: "{{ docker_volume_owner }}"
+    group: "{{ docker_volume_group }}"
   loop: "{{ local_docker_compose.files }}"
 - name: Copy all docker files and folders to remote
   copy:
     src: "{{ item.path }}/"
     dest: "{{ (item.path | split('/'))[6] }}/"
     mode: preserve
-    owner: "oscar"
-    group: "oscar"
+    owner: "{{ docker_volume_owner }}"
+    group: "{{ docker_volume_group }}"
     directory_mode: "0755"
   loop: "{{ local_docker_compose.files }}"
 
-- name: Ensure docker volumes have correct permissions
+- name: Ensure docker volumes have correct permissions with GID 1000
   file:
     path: "{{ (item.path | split('/'))[6] }}"
-    owner: "oscar"
-    group: "oscar"
+    owner: "{{ docker_volume_owner }}"
+    group: "{{ docker_volume_gid }}"
     mode: "0755"
+    recurse: yes
   loop: "{{ local_docker_compose.files }}"
 
 - name: Set docker-compose files to 600 permissions
   file:
     path: "{{ (item.path | split('/'))[6] }}/docker-compose.yaml"
-    owner: "oscar"
-    group: "oscar"
+    owner: "{{ docker_volume_owner }}"
+    group: "{{ docker_volume_group }}"
     mode: "0600"
   loop: "{{ local_docker_compose.files }}"
   ignore_errors: yes

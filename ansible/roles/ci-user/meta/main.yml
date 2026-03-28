@@ -1,0 +1,17 @@
+#SPDX-License-Identifier: MIT-0
+galaxy_info:
+  author: IAC Team
+  description: Creates CI user with wheel and docker permissions and generates SSH keys
+  company: IAC
+
+  license: MIT
+
+  min_ansible_version: "2.1"
+
+  galaxy_tags:
+    - ci
+    - user
+    - ssh
+    - docker
+
+dependencies: []

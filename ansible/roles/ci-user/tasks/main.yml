@@ -1,0 +1,84 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for ci-user
+# Creates CI user with wheel and docker permissions, generates SSH keys
+
+- name: Create CI user
+  become: yes
+  become_method: sudo
+  user:
+    name: "{{ ci_user_name }}"
+    shell: "{{ ci_user_shell }}"
+    groups: "{{ ci_user_groups }}"
+    append: yes
+    createhome: yes
+    home: "{{ ci_user_home }}"
+
+- name: Set disabled password for CI user
+  become: yes
+  become_method: sudo
+  user:
+    name: "{{ ci_user_name }}"
+    password: "*"
+
+- name: Create .ssh directory for CI user
+  become: yes
+  become_method: sudo
+  file:
+    path: "{{ ci_user_home }}/.ssh"
+    state: directory
+    mode: "0700"
+    owner: "{{ ci_user_name }}"
+    group: "{{ ci_user_name }}"
+
+- name: Generate SSH key pair for CI user
+  become: yes
+  become_method: sudo
+  become_user: "{{ ci_user_name }}"
+  openssh_keypair:
+    path: "{{ ci_user_home }}/.ssh/{{ ci_ssh_key_file }}"
+    type: "{{ ci_ssh_key_type }}"
+    size: 4096
+    comment: "{{ ci_ssh_comment }}"
+    state: present
+    force: no
+  register: ssh_key_result
+
+- name: Read generated public key content
+  become: yes
+  become_method: sudo
+  slurp:
+    src: "{{ ci_user_home }}/.ssh/{{ ci_ssh_key_file }}.pub"
+  register: public_key_slurp
+
+- name: Output SSH public key for Forgejo
+  debug:
+    msg: "CI User SSH Public Key: {{ public_key_slurp.content | b64decode | trim }}"
+
+- name: Set proper permissions on .ssh directory
+  become: yes
+  become_method: sudo
+  file:
+    path: "{{ ci_user_home }}/.ssh"
+    state: directory
+    mode: "0700"
+    owner: "{{ ci_user_name }}"
+    group: "{{ ci_user_name }}"
+
+- name: Set proper permissions on private key
+  become: yes
+  become_method: sudo
+  file:
+    path: "{{ ci_user_home }}/.ssh/{{ ci_ssh_key_file }}"
+    mode: "0600"
+    owner: "{{ ci_user_name }}"
+    group: "{{ ci_user_name }}"
+
+- name: Set proper permissions on public key
+  become: yes
+  become_method: sudo
+  file:
+    path: "{{ ci_user_home }}/.ssh/{{ ci_ssh_key_file }}.pub"
+    mode: "0644"
+    owner: "{{ ci_user_name }}"
+    group: "{{ ci_user_name }}"

@@ -1,3 +1,7 @@
 #SPDX-License-Identifier: MIT-0
 ---
 # defaults file for docker
+
+docker_volume_owner: "oscar"
+docker_volume_group: "oscar"
+docker_volume_gid: 1000

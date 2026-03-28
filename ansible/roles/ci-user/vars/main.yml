@@ -1,0 +1,4 @@
+#SPDX-License-Identifier: MIT-0
+---
+# vars file for ci-user
+# These variables have higher priority than defaults

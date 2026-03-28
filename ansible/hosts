@@ -1,4 +1,5 @@
 [main]
 media
+laptop.oscarcorner.com ansible_user=ci
 [updates]
 laptop.oscarcorner.com ansible_user=ci
