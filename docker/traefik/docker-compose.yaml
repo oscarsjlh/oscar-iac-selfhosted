@@ -20,9 +20,11 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./letsencrypt:/letsencrypt
-      - ./config/traefik.yaml:/traefik.yaml:ro
-      - ./config/rules.yml:/rules.yml:ro
-      - /home/oscar/traefik/config/logs:/var/log/traefik
+      - ./config/traefik.yaml:/etc/traefik/traefik.yaml:ro
+      - ./config/rules.yml:/etc/traefik/rules.yml:ro
+      - ./config/logs:/var/log/traefik
+    command:
+      - --configFile=/etc/traefik/traefik.yaml
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.traefik.entrypoints=http"

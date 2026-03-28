@@ -8,7 +8,7 @@ deploy_docker_remote:
 	$(ansibleCommand)docker.yaml
 
 deploy_docker_local:
-	$(ansibleCommand)docker-local.yaml
+	$(ansibleCommand)docker-local.yaml -K
 
 # Systemd deployment targets
 deploy_systemd:

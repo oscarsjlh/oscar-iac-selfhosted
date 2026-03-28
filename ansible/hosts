@@ -1,5 +1,5 @@
 [local]
-media ansible_connection=local ansible_user=oscar
+media ansible_user=oscar 
 
 [remote]
 laptop.oscarcorner.com ansible_user=ci
