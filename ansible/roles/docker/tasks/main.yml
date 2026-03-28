@@ -25,6 +25,23 @@
     directory_mode: "0755"
   loop: "{{ local_docker_compose.files }}"
 
+- name: Ensure docker volumes have correct permissions
+  file:
+    path: "{{ (item.path | split('/'))[6] }}"
+    owner: "oscar"
+    group: "oscar"
+    mode: "0755"
+  loop: "{{ local_docker_compose.files }}"
+
+- name: Set docker-compose files to 600 permissions
+  file:
+    path: "{{ (item.path | split('/'))[6] }}/docker-compose.yaml"
+    owner: "oscar"
+    group: "oscar"
+    mode: "0600"
+  loop: "{{ local_docker_compose.files }}"
+  ignore_errors: yes
+
 - name: Find shell scripts in docker directories
   find:
     paths: "{{ (item.path | split('/'))[6] }}"
@@ -38,8 +55,8 @@
   file:
     path: "{{ item.path }}"
     mode: "0755"
-    owner: "oscar"
-    group: "oscar"
+    owner: "ci"
+    group: "ci"
   loop: "{{ shell_scripts.results | selectattr('files', 'defined') | map(attribute='files') | flatten }}"
   when: shell_scripts.results is defined
 - name: Run docker compose up

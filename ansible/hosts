@@ -1,4 +1,4 @@
 [main]
 media
 [updates]
-root@laptop.oscarcorner.com
+laptop.oscarcorner.com ansible_user=ci

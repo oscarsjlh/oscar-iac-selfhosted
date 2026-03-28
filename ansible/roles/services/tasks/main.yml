@@ -2,6 +2,20 @@
 ---
 # tasks file for services
 #
+- name: Create ci user
+  user:
+    name: ci
+    shell: /bin/bash
+    groups: docker,sudo
+    append: yes
+    createhome: yes
+    home: /home/ci
+
+- name: Set password for ci user (disabled)
+  user:
+    name: ci
+    password: "*"
+
 - name: Ensure systemd user directory exists
   file:
     path: "{{ systemd_path }}"
@@ -19,6 +33,34 @@
     mode: '0644'
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
+- name: Create SSH directory for ci user
+  file:
+    path: /home/ci/.ssh
+    state: directory
+    mode: '0700'
+    owner: ci
+    group: ci
+
+- name: Add SSH deploy key for ci user
+  authorized_key:
+    user: ci
+    key: "{{ lookup('file', '/home/runner/.ssh/id_rsa.pub') }}"
+    state: present
+
+- name: Set proper permissions on ci SSH directory
+  file:
+    path: /home/ci/.ssh
+    owner: ci
+    group: ci
+    mode: '0700'
+
+- name: Set proper permissions on ci home directory
+  file:
+    path: /home/ci
+    owner: ci
+    group: ci
+    mode: '0755'
+
 - name: Run systemctl daemon reload
   systemd:
     daemon_reload: true
