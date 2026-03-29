@@ -1,7 +1,7 @@
 services:
   # Frontend - Caddy web server serving static files and proxying API requests
   frontend:
-    image: registry.oscarcorner.com/ytdw-frontend
+    image: registry.oscarcorner.com/ytdw-frontend@sha256:7b2d60e4f368607c4ce9b155771145af770ba7de5096e8ef8606a0e6acaec596
     ports:
       - "8082:80"
     environment:
@@ -23,7 +23,7 @@ services:
 
   # Backend - API and WebSocket server (distroless image)
   backend:
-    image: registry.oscarcorner.com/ytdw-backend
+    image: registry.oscarcorner.com/ytdw-backend@sha256:808f3bf4783007308c6ce4efded1a7d924e4ee96d4f831685be4a7157b49e72d
     group_add:
       - 971
     environment:
@@ -43,7 +43,7 @@ services:
   # yt-dlp worker (used by backend via docker run)
   # This service is built but not run directly - backend spawns containers from this image
   ytdlp-worker:
-    image: registry.oscarcorner.com/yt-dlp-worker
+    image: registry.oscarcorner.com/yt-dlp-worker@sha256:36318a63338ddc4ba8abab215de5dfc79a1521777dc330af3b5064ed6c811ae7
     networks:
       - reverse-proxy-network
     volumes:
