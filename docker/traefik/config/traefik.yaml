@@ -22,7 +22,7 @@ serversTransport:
   insecureSkipVerify: true
 providers:
   file:
-    filename: "./rules.yml"
+    filename: "/etc/traefik/rules.yml"
     watch: true
   docker:
     endpoint: "unix:///var/run/docker.sock"
