@@ -49,6 +49,20 @@
     recurse: yes
   loop: "{{ local_docker_compose.files }}"
 
+- name: Ensure acme file exists
+  stat:
+    path: "{{ docker_deploy_path }}/traefik/letsencrypt/acme.json"
+  register: acme_path
+- name: Ensure acme json file has right permissions
+  become: yes
+  file:
+    path: "{{ docker_deploy_path }}/traefik/letsencrypt/acme.json"
+    owner: "{{ docker_volume_owner }}"
+    group: "{{ docker_volume_gid }}"
+    mode: "0600"
+    recurse: yes
+  when: stat_result.acme_path
+
 - name: Set docker-compose files to 600 permissions
   become: yes
   file:
