@@ -2,5 +2,53 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended"
-  ]
+  ],
+  "dependencyDashboard": true,
+  "dependencyDashboardTitle": "Renovate Dashboard",
+  "assignees": [
+    "renovate"
+  ],
+  "labels": [
+    "renovate"
+  ],
+  "configMigration": true,
+  "prHourlyLimit": 0,
+  "packageRules": [
+    {
+      "description": "Group all Docker Compose updates into a single PR",
+      "matchManagers": [
+        "docker-compose"
+      ],
+      "matchDatasources": [
+        "docker"
+      ],
+      "groupName": "Docker images",
+      "pinDigests": true,
+      "versioning": "docker",
+      "enabled": true,
+      "automerge": true
+    },
+    {
+      "description": "Separate major updates for manual review",
+      "matchManagers": [
+        "docker-compose"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "groupName": "Docker images - major",
+      "automerge": false
+    }
+  ],
+  "docker-compose": {
+    "fileMatch": [
+      "^docker/.+/docker-compose\\.ya?ml$"
+    ],
+    "hostRules": [
+      {
+        "matchHost": "docker.io",
+        "concurrentRequestLimit": 2
+      }
+    ]
+  }
 }
