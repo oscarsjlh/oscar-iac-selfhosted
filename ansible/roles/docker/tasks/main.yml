@@ -50,7 +50,7 @@
   loop: "{{ local_docker_compose.files }}"
 
 - name: Ensure acme file exists
-  stat:
+  ansible.builtin.stat:
     path: "{{ docker_deploy_path }}/traefik/letsencrypt/acme.json"
   register: acme_path
 - name: Ensure acme json file has right permissions
@@ -60,7 +60,7 @@
     owner: "{{ docker_volume_owner }}"
     group: "{{ docker_volume_gid }}"
     mode: "0600"
-  when: stat_result.acme_path
+  when: acme_path.stat.exists
 
 - name: Set docker-compose files to 600 permissions
   become: yes
