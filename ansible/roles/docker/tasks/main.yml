@@ -60,7 +60,6 @@
     owner: "{{ docker_volume_owner }}"
     group: "{{ docker_volume_gid }}"
     mode: "0600"
-    recurse: yes
   when: stat_result.acme_path
 
 - name: Set docker-compose files to 600 permissions
