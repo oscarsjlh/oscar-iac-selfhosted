@@ -41,8 +41,8 @@
     }
   ],
   "docker-compose": {
-    "fileMatch": [
-      "^docker/.+/docker-compose\\.ya?ml$"
+    "managerFilePatterns": [
+      "/^docker/.+/docker-compose\.ya?ml$/"
     ],
     "hostRules": [
       {
