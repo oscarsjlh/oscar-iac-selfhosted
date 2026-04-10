@@ -99,7 +99,7 @@ services:
       traefik.http.routers.prowlarr.tls.certresolver: route53
 
   sabnzbd:
-    image: lscr.io/linuxserver/sabnzbd:5.0.0-unstable@sha256:ac2d682e1d8f8f3e1c734d67a1e534661e16359609907f3952bb0c8c879a1e72
+    image: lscr.io/linuxserver/sabnzbd:5.0.0-unstable@sha256:e575b040f193ddfe341f94a1465f90bef94a83ea91c8019ca453a750565270c1
     container_name: sabnzbd
     depends_on:
       - gluetun
@@ -159,7 +159,7 @@ services:
       - /mnt/main/downloads/torrent:/downloads/torrent
       - /mnt/main/downloads/usenet:/downloads/usenet # optional
   calibre:
-    image: lscr.io/linuxserver/calibre:9.6.0@sha256:f6368bd6f8ccd172ce2db8e520a4249cf5ccb90c2631537edc566cf8bf8a53a8
+    image: lscr.io/linuxserver/calibre:9.7.0@sha256:ae23457c7b0cf8931935400733724d57b3a5b965eb9893d9344b1ba84b9cb3b9
     container_name: calibre
     environment:
       - PUID=${PUID}
@@ -199,7 +199,7 @@ services:
       traefik.http.routers.calibre-web.tls.certresolver: route53
 
   bazarr:
-    image: lscr.io/linuxserver/bazarr:1.5.6@sha256:9a631194c0dee21c85b5bff59e23610e1ae2f54594e922973949d271102e585e
+    image: lscr.io/linuxserver/bazarr:1.5.6@sha256:21a4813c5ba120d72ac5f54869b790792bda0784205268eccbc204adb6dbe485
     container_name: bazarr
     environment: *common-environment
     <<: [*reverse-proxy-network, *common-restart]
@@ -239,7 +239,7 @@ services:
       - "./configs/navidrome:/data"
       - "/mnt/nas/media/music:/music:ro"
   cleanuparr:
-    image: ghcr.io/cleanuparr/cleanuparr:2.9.3@sha256:284577a6c457bc6af06a2a7fb9640eea27c8136a34c459a5e0d323230db62dad
+    image: ghcr.io/cleanuparr/cleanuparr:2.9.5@sha256:6c14c9560f0d97f248d02369fd9b122ec2d6d04af51b6c4ec87e7084b913cdf7
     container_name: cleanuparr
     restart: unless-stopped
     ports:
