@@ -216,28 +216,6 @@ services:
       traefik.http.routers.bazarr.rule: Host(`bazarr.oscarcorner.com`)
       traefik.http.services.bazarr.loadbalancer.server.port: 6767
       traefik.http.routers.bazarr.tls.certresolver: route53
-  navidrome:
-    image: deluan/navidrome:0.61.2@sha256:9fa40b3d8dec43ceb2213d1fa551da3dcfef6ac6d19c2e534efb92527c2bafd2
-    user: 1000:1000 # should be owner of volumes
-    container_name: navidrome
-    ports:
-      - "4533:4533"
-    <<: [*reverse-proxy-network, *common-restart]
-    labels:
-      traefik.enable: true
-      # increase readingTimeouts for the entrypoint used here
-      traefik.http.routers.navidrome.entrypoints: websecure
-      traefik.http.routers.navidrome.rule: Host(`navidrome.oscarcorner.com`)
-      traefik.http.services.navidrome.loadbalancer.server.port: 4533
-      traefik.http.routers.navidrome.tls.certresolver: route53
-    environment:
-      ND_SCANSCHEDULE: 1h
-      ND_LOGLEVEL: info
-      ND_SESSIONTIMEOUT: 24h
-      ND_BASEURL: "https://navidrome.oscarcorner.com"
-    volumes:
-      - "./configs/navidrome:/data"
-      - "/mnt/nas/media/music:/music:ro"
   cleanuparr:
     image: ghcr.io/cleanuparr/cleanuparr:2.9.8@sha256:563b01707cb4509731793ce03bfc26f08640f4194908cc1fa6782e75f59dc405
     container_name: cleanuparr
