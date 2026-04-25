@@ -92,9 +92,9 @@ source = '''
 type = "remap"
 inputs = ["docker_logs"]
 source = '''
-# Try to parse JSON messages, fallback to raw message
-parsed = parse_json(.message)
-if is_object(parsed) {
+msg = string(.message) ?? ""
+parsed, err = parse_json(msg)
+if err == null && is_object(parsed) {
   .log = parsed
   if exists(.log.level) {
     .level = string!(.log.level)
