@@ -92,27 +92,31 @@ source = '''
 type = "remap"
 inputs = ["docker_logs"]
 source = '''
-# Parse the original message
-.log = parse_json(.message) ?? { "message": .message }
-if exists(.log.level) {
-  .level = string!(.log.level)
+# Try to parse JSON messages, fallback to raw message
+parsed = parse_json(.message)
+if is_object(parsed) {
+  .log = parsed
+  if exists(.log.level) {
+    .level = string!(.log.level)
+  } else {
+    .level = "info"
+  }
 } else {
-  .level = "info" # Default to info if no level given
+  .level = "info"
 }
-del(.label)
 '''
 
 [transforms.docker_labels]
 type = "remap"
 inputs = ["parse_and_enrich"]
 source = '''
-.service = if exists(.labels."com.docker.compose.service") {
-  string!(.labels."com.docker.compose.service")
+.service = if exists(.label."com.docker.compose.service") {
+  string!(.label."com.docker.compose.service")
 } else {
   "unknown"
 }
-.project = if exists(.labels."com.docker.compose.project") {
-  string!(.labels."com.docker.compose.project")
+.project = if exists(.label."com.docker.compose.project") {
+  string!(.label."com.docker.compose.project")
 } else {
   "unknown"
 }
