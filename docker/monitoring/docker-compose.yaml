@@ -143,3 +143,18 @@ services:
     restart: unless-stopped
     networks:
       - monitoring
+  graphite-exporter:
+    image: prom/graphite-exporter:v0.15.2@sha256:4fe89d73165b8059a8933b9dc3339be423d3da7b50d5b6e3e8d987adce25f8c9
+    container_name: graphite-exporter
+    restart: unless-stopped
+    command:
+      - "--graphite.mapping-config=/config/graphite_mapping.conf"
+    volumes:
+      - ./graphite_mapping.conf:/config/graphite_mapping.conf:ro
+    ports:
+      - "9109:9109/tcp" # Graphite input (plaintext)
+      - "9109:9109/udp" # Graphite input (UDP)
+    expose:
+      - 9108 # Prometheus metrics output
+    networks:
+      - monitoring

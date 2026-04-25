@@ -1,0 +1,19 @@
+name: Renovate
+on:
+  schedule:
+    # Run daily at 3 AM UTC
+    - cron: "0 3 * * 1"
+  workflow_dispatch: # Allow manual triggers
+
+jobs:
+  renovate:
+    runs-on: ubuntu-latest
+    container: ghcr.io/renovatebot/renovate:latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+      - run: renovate
+        env:
+          RENOVATE_CONFIG_FILE: ${{ forgejo.workspace }}/config.js
+          LOG_LEVEL: "debug"
+          RENOVATE_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
