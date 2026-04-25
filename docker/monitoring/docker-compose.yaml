@@ -144,17 +144,12 @@ services:
     networks:
       - monitoring
   graphite-exporter:
-    image: prom/graphite-exporter:v0.16.0
+    image: ghcr.io/supporterino/truenas-graphite-to-prometheus:v2.2.1
     container_name: graphite-exporter
     restart: unless-stopped
-    command:
-      - "--graphite.mapping-config=/config/graphite_mapping.conf"
-    volumes:
-      - ./graphite_mapping.conf:/config/graphite_mapping.conf:ro
     ports:
       - "9109:9109/tcp" # Graphite input (plaintext)
       - "9109:9109/udp" # Graphite input (UDP)
-    expose:
-      - 9108 # Prometheus metrics output
+      - "9108:9108/tcp" # Prometheus metrics output
     networks:
       - monitoring
