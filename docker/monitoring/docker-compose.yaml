@@ -151,5 +151,7 @@ services:
       - "9109:9109/tcp" # Graphite input (plaintext)
       - "9109:9109/udp" # Graphite input (UDP)
       - "9108:9108/tcp" # Prometheus metrics output
+    volumes:
+      - ./graphite_mapping.conf:/config/graphite_mapping.conf:ro
     networks:
       - monitoring
