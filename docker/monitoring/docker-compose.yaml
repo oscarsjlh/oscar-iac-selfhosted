@@ -144,7 +144,7 @@ services:
     networks:
       - monitoring
   graphite-exporter:
-    image: ghcr.io/supporterino/truenas-graphite-to-prometheus:v2.2.1
+    image: ghcr.io/supporterino/truenas-graphite-to-prometheus:v2.2.1@sha256:60e7645f74a3243d7fb9e6a15c05ea3b4cddfd2bc7ba9e2b11321ce1d38286dd
     container_name: graphite-exporter
     restart: unless-stopped
     ports:
