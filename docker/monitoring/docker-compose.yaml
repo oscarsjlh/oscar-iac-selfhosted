@@ -15,11 +15,13 @@ services:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
       - /:/rootfs:ro
+      - /var/lib/node-exporter/textfile:/etc/node-exporter/textfile
     command:
       - "--path.procfs=/host/proc"
       - "--path.rootfs=/rootfs"
       - "--path.sysfs=/host/sys"
       - "--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)"
+      - "--collector.textfile.directory=/etc/node-exporter/textfile"
     expose:
       - 9100
     networks:
@@ -151,7 +153,5 @@ services:
       - "9109:9109/tcp" # Graphite input (plaintext)
       - "9109:9109/udp" # Graphite input (UDP)
       - "9108:9108/tcp" # Prometheus metrics output
-    volumes:
-      - ./graphite_mapping.conf:/config/graphite_mapping.conf:ro
     networks:
       - monitoring
