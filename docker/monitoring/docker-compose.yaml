@@ -89,22 +89,22 @@ services:
     networks:
       - monitoring
       - reverse-proxy-network
-  dcgm-exporter:
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities:
-                - gpu
-    cap_add:
-      - SYS_ADMIN
-    ports:
-      - 9400:9400
-    image: nvcr.io/nvidia/k8s/dcgm-exporter:4.5.2-4.8.1-distroless@sha256:ed594cf53fe6942e84b07b0740cdcbb249fa4b39cb21feeebf93881ae51f0b5e
-    networks:
-      - monitoring
+  # dcgm-exporter:
+  #   deploy:
+  #     resources:
+  #       reservations:
+  #         devices:
+  #           - driver: nvidia
+  #             count: all
+  #             capabilities:
+  #               - gpu
+  #   cap_add:
+  #     - SYS_ADMIN
+  #   ports:
+  #     - 9400:9400
+  #   image: nvcr.io/nvidia/k8s/dcgm-exporter:4.5.2-4.8.1-distroless@sha256:ed594cf53fe6942e84b07b0740cdcbb249fa4b39cb21feeebf93881ae51f0b5e
+  #   networks:
+  #     - monitoring
   nut-exporter:
     # Stable v1
     image: hon95/prometheus-nut-exporter:1@sha256:a9bfbbae3b12a6486e6e4b933a69a79d01342db27346d6b4cd5512f4eef6b111
