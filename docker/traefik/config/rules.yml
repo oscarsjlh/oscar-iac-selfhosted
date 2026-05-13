@@ -51,7 +51,12 @@ http:
         - websecure
       tls: {}
       service: navidrome-service
-
+    cicd-router:
+      rule: Host(`cicd.oscarcorner.com`)
+      entrypoints:
+        - websecure
+      tls: {}
+      service: cicd-service
   middlewares:
     default-headers:
       headers:
@@ -95,6 +100,10 @@ http:
       loadBalancer:
         servers:
           - url: http://nas.oscarcorner.com:30043
+    cicd-service:
+      loadBalancer:
+        servers:
+          - url: http://nas.oscarcorner.com:30166
 
     admin:
       loadBalancer:
