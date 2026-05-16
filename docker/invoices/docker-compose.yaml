@@ -1,10 +1,21 @@
 services:
   invoice-app:
     image: registry.oscarcorner.com/invoices
+    user: 1000:1000 # optional: replace with your own user/group or uid/gid
     build: .
-    ports:
-      - "8080:8080"
     env_file: .env
     volumes:
       - ./data:/app/data
     restart: unless-stopped
+    networks:
+      - reverse-proxy-network
+    labels:
+      traefik.enable: true
+      traefik.http.routers.invoices.service: invoices
+      traefik.http.routers.invoices.entrypoints: websecure
+      traefik.http.routers.invoices.rule: Host(`invoices.oscarcorner.com`)
+      traefik.http.services.invoices.loadbalancer.server.port: 8080
+      traefik.http.routers.invoices.tls.certresolver: route53
+networks:
+  reverse-proxy-network:
+    external: true # or comment this line to auto create the network
