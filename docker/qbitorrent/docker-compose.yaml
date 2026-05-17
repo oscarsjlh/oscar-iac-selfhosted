@@ -99,7 +99,7 @@ services:
       traefik.http.routers.prowlarr.tls.certresolver: route53
 
   sabnzbd:
-    image: lscr.io/linuxserver/sabnzbd:5.0.2-unstable@sha256:a623e7cbeafe2281dbe0b6d9696f2fd130d84942eed7072bf349054f7c860855
+    image: lscr.io/linuxserver/sabnzbd:5.0.3-unstable@sha256:abd83cd01cc1a31f8440751333e8e0a6cc01504f83e8c21f3991625a7fe986be
     container_name: sabnzbd
     depends_on:
       - gluetun
@@ -217,7 +217,7 @@ services:
       traefik.http.services.bazarr.loadbalancer.server.port: 6767
       traefik.http.routers.bazarr.tls.certresolver: route53
   cleanuparr:
-    image: ghcr.io/cleanuparr/cleanuparr:2.9.12@sha256:9b8f7a5f740c6cdc8f799a1d4b367ea560c0ce60799100afc3e14b6e3468cb5e
+    image: ghcr.io/cleanuparr/cleanuparr:2.9.13@sha256:4ad626da7e1d2774ca51bbfa812f832d5639264b3fe308909e47de02ba2188f7
     container_name: cleanuparr
     restart: unless-stopped
     ports:
