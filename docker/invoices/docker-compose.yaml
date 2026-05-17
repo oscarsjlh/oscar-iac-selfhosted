@@ -16,6 +16,16 @@ services:
       traefik.http.routers.invoices.rule: Host(`invoices.oscarcorner.com`)
       traefik.http.services.invoices.loadbalancer.server.port: 8080
       traefik.http.routers.invoices.tls.certresolver: route53
+  ocr-service:
+    image: registry.oscarcorner.com/invoices-ocr
+    user: 1000:1000 # optional: replace with your own user/group or uid/gid
+    build:
+      context: ./ocr-service
+    ports:
+      - "8000:8000"
+    env_file: .env
+    restart: unless-stopped
 networks:
   reverse-proxy-network:
     external: true # or comment this line to auto create the network
+
