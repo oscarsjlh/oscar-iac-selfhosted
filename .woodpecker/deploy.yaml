@@ -1,5 +1,7 @@
 when:
   - manual
+  - event: push
+    branch: main
 steps:
   - name: deploy
     image: woodpeckerci/plugin-ansible
