@@ -26,6 +26,7 @@ jobs:
           # Save deploy key
           echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
+          cat ~/.ssh/deploy_key
           # Determine key type and rename appropriately
           if head -1 ~/.ssh/deploy_key | grep -q "ed25519\|ED25519"; then
           mv ~/.ssh/deploy_key ~/.ssh/id_ed25519
@@ -47,5 +48,5 @@ jobs:
           EOF
           chmod 600 ~/.ssh/config
 
-      - name: Deploy Docker
-        run: make deploy_docker
+      # - name: Deploy Docker
+      #   run: make deploy_docker
