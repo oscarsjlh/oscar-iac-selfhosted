@@ -1,0 +1,13 @@
+when:
+  branch: main
+  event: push
+
+steps:
+  - name: deploy
+    image: woodpeckerci/plugin-ansible
+    settings:
+      playbook: ansible/docker.yaml
+      inventory: ansible/hosts
+      galaxy: ansible/requirements.yml
+      private_key:
+        from_secret: deploy_key
