@@ -1,5 +1,4 @@
 when:
-  - cron
   - manual
   - event: push
     branch: main
