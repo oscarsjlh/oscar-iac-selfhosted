@@ -3,7 +3,7 @@
 media ansible_user=oscar 
 
 [remote]
-laptop.oscarcorner.com ansible_user=ci
+192.168.1.231 ansible_user=ci
 
 # Combined group for when you want to target both
 [all:children]
