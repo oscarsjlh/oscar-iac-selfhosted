@@ -5,6 +5,7 @@ when:
 steps:
   - name: deploy
     image: woodpeckerci/plugin-ansible
+    dns: 192.168.1.231
     settings:
       playbook: ansible/docker.yaml
       inventory: ansible/hosts
