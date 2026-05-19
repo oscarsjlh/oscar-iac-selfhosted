@@ -8,6 +8,7 @@ steps:
     settings:
       playbook: ansible/docker.yaml
       inventory: ansible/hosts
+      become: true
       galaxy: ansible/requirements.yml
       private_key:
         from_secret: deploy_key
