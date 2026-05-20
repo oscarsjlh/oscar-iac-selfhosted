@@ -12,3 +12,4 @@ steps:
       galaxy: ansible/requirements.yml
       private_key:
         from_secret: deploy_key
+      ssh_extra_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
