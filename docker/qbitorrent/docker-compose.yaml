@@ -239,7 +239,7 @@ services:
       traefik.http.services.cleanuparr.loadbalancer.server.port: 11011
       traefik.http.routers.cleanuparr.tls.certresolver: route53
   profilarr:
-    image: dictionarry-hub/profilarr:2.0.4
+    image: ghcr.io/dictionarry-hub/profilarr:2.0.4
     container_name: profilarr
     <<: [*reverse-proxy-network, *common-restart]
     volumes:

@@ -26,6 +26,11 @@ services:
       - ./config/logs:/var/log/traefik
     command:
       - --configFile=/etc/traefik/traefik.yaml
+      - --metrics.prometheus=true
+      - --metrics.prometheus.entryPoint=metrics
+      - --entryPoints.metrics.address=:8082
+      - --metrics.prometheus.buckets=0.1,0.3,1.2,5.0
+
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.traefik.entrypoints=http"

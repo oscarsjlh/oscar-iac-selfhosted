@@ -25,6 +25,8 @@ services:
       - "8000:8000"
     env_file: .env
     restart: unless-stopped
+    networks:
+      - reverse-proxy-network
 networks:
   reverse-proxy-network:
     external: true # or comment this line to auto create the network
