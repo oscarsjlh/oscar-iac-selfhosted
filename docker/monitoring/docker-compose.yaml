@@ -6,6 +6,7 @@ networks:
 volumes:
   prometheus_data: {}
   grafana_storage: {}
+  tempo_data: {}
 services:
   node-exporter:
     image: prom/node-exporter:v1.11.1@sha256:e9cff4fc67b1818f8c97adb115b9f12c9a54b533de86765d4a0effc01b357205
@@ -32,7 +33,7 @@ services:
     container_name: prometheus
     restart: unless-stopped
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus.yaml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
@@ -40,6 +41,7 @@ services:
       - "--web.console.libraries=/etc/prometheus/console_libraries"
       - "--web.console.templates=/etc/prometheus/consoles"
       - "--web.enable-lifecycle"
+      - "--web.enable-remote-write-receiver"
     labels:
       traefik.enable: true
       # increase readingTimeouts for the entrypoint used here
@@ -86,9 +88,25 @@ services:
       traefik.docker.network: reverse-proxy-network
     volumes:
       - "grafana_storage:/var/lib/grafana"
+      - "./grafana/provisioning:/etc/grafana/provisioning:ro"
     networks:
       - monitoring
       - reverse-proxy-network
+  tempo:
+    image: grafana/tempo:2.10.5@sha256:ee21727732c7a7199cb71c3eee9153bbf23f9b0b87619f0555a0cf21a67f1a33
+    container_name: tempo
+    command: -config.file=/etc/tempo/tempo.yaml
+    restart: unless-stopped
+    volumes:
+      - ./tempo.yaml:/etc/tempo/tempo.yaml:ro
+      - tempo_data:/var/tempo
+    ports:
+      - "4317:4317/tcp" # OTLP gRPC
+      - "4318:4318/tcp" # OTLP HTTP
+    expose:
+      - 3200
+    networks:
+      - monitoring
   # dcgm-exporter:
   #   deploy:
   #     resources:
