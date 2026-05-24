@@ -3,24 +3,24 @@ when:
   - event: push
     branch: main
 steps:
-  - name: debug-key
-    image: alpine
-    commands:
-      - apk add --no-cache openssh
-      - echo "$DEPLOY_KEY" > /tmp/key
-      - chmod 600 /tmp/key
-      - cat -A /tmp/key
-      - ssh-keygen -yf /tmp/key
-    environment:
-      DEPLOY_KEY:
-        from_secret: deploy_key
-  # - name: deploy
-  #   image: woodpeckerci/plugin-ansible
-  #   settings:
-  #     playbook: ansible/docker.yaml
-  #     inventory: ansible/hosts
-  #     become: true
-  #     galaxy: ansible/requirements.yml
-  #     private_key:
+  # - name: debug-key
+  #   image: alpine
+  #   commands:
+  #     - apk add --no-cache openssh
+  #     - echo "$DEPLOY_KEY" > /tmp/key
+  #     - chmod 600 /tmp/key
+  #     - cat -A /tmp/key
+  #     - ssh-keygen -yf /tmp/key
+  #   environment:
+  #     DEPLOY_KEY:
   #       from_secret: deploy_key
-  #     ssh_extra_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+  - name: deploy
+    image: woodpeckerci/plugin-ansible
+    settings:
+      playbook: ansible/docker.yaml
+      inventory: ansible/hosts
+      become: true
+      galaxy: ansible/requirements.yml
+      private_key:
+        from_secret: deploy_key
+      ssh_extra_args: "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"

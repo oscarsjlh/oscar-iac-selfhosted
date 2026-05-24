@@ -1,6 +1,6 @@
 services:
   invoice-app:
-    image: registry.oscarcorner.com/invoices
+    image: registry.oscarcorner.com/invoices:v2.2.1
     user: 1000:1000 # optional: replace with your own user/group or uid/gid
     build: .
     env_file: .env
@@ -17,7 +17,7 @@ services:
       traefik.http.services.invoices.loadbalancer.server.port: 8080
       traefik.http.routers.invoices.tls.certresolver: route53
   ocr-service:
-    image: registry.oscarcorner.com/invoices-ocr
+    image: registry.oscarcorner.com/invoices-ocr:v2.2.1
     user: 1000:1000 # optional: replace with your own user/group or uid/gid
     build:
       context: ./ocr-service
