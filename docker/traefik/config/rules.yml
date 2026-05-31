@@ -79,31 +79,31 @@ http:
     git-service:
       loadBalancer:
         servers:
-          - url: http://nas.oscarcorner.com:30142
+          - url: http://192.168.1.108:30142
     bentopdf-service:
       loadBalancer:
         servers:
-          - url: http://nas.oscarcorner.com:30289
+          - url: http://192.168.1.108:30289
     netdata-service:
       loadBalancer:
         servers:
-          - url: http://nas.oscarcorner.com:20489
+          - url: http://192.168.1.108:20489
     makemkv-service:
       loadBalancer:
         servers:
-          - url: http://nas.oscarcorner.com:5800
+          - url: http://192.168.1.108:5800
     jellyfin-service:
       loadBalancer:
         servers:
-          - url: http://nas.oscarcorner.com:30013
+          - url: http://192.168.1.108:30013
     navidrome-service:
       loadBalancer:
         servers:
-          - url: http://nas.oscarcorner.com:30043
+          - url: http://192.168.1.108:30043
     cicd-service:
       loadBalancer:
         servers:
-          - url: http://nas.oscarcorner.com:30166
+          - url: http://192.168.1.108:30166
 
     admin:
       loadBalancer:

@@ -9,6 +9,8 @@ services:
       - .env # store other secrets e.g., dashboard password
     networks:
       - reverse-proxy-network
+    dns:
+      - 1.1.1.1
     ports:
       - 80:80
       - 443:443
