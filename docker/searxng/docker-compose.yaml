@@ -3,14 +3,13 @@ services:
     container_name: searxng
     image: searxng/searxng:latest
     restart: unless-stopped
+    env_file:
+      - .env
     networks:
       - reverse-proxy-network
-      - default
     volumes:
       - ./searxng.yaml:/etc/searxng/settings.yml:ro
       - searxng-cache:/var/cache/searxng
-    env_file:
-      - .env
     environment:
       SEARXNG_BASE_URL: https://search.oscarcorner.com/
       SEARXNG_VALKEY_URL: valkey://valkey:6379/0
@@ -28,6 +27,8 @@ services:
     restart: unless-stopped
     volumes:
       - valkey-data:/data/
+    networks:
+      - reverse-proxy-network
 
 networks:
   reverse-proxy-network:
