@@ -1,22 +1,31 @@
 server:
-  base_url: https://searxng.oscarcorner.com/
+  base_url: https://search.oscarcorner.com/
   bind_address: "0.0.0.0"
-  bind_port: 8080
-  listen_timeout: 120000
+  port: 8080
+  limiter: false
+  public_instance: false
 
 search:
   safe_search: 0
-  safe_search_enabled: true
   formats:
     - html
     - json
+
+valkey:
+  url: valkey://valkey:6379/0
+
+outgoing:
+  request_timeout: 5.0
+
 engines:
   - name: google
     engine: google
+    shortcut: go
   - name: duckduckgo
     engine: duckduckgo
+    shortcut: ddg
   - name: wikipedia
     engine: wikipedia
-
-valkey:
-  url: redis://redis:6379/0
+    shortcut: wp
+    display_type: ["infobox"]
+    categories: [general]
