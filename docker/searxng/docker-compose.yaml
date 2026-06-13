@@ -10,7 +10,8 @@ services:
     env_file:
       - .env
     environment:
-      - SEARXNG_SETTINGS_PATH=/etc/searxng/searxng.yml
+      - ./config.yaml:/etc/searxng/:Z
+      - core-data:/var/cache/searxng/
     labels:
       traefik.enable: true
       traefik.http.routers.searxng.entrypoints: websecure
@@ -18,6 +19,16 @@ services:
       traefik.http.services.searxng.loadbalancer.server.port: 8080
       traefik.http.routers.searxng.tls.certresolver: route53
 
+  valkey:
+    container_name: searxng-valkey
+    image: docker.io/valkey/valkey:9-alpine
+    command: valkey-server --save 30 1 --loglevel warning
+    restart: always
+    volumes:
+      - valkey-data:/data/
+
 networks:
   reverse-proxy-network:
     external: true
+volumes:
+  valkey-data:
