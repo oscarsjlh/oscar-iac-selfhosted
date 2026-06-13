@@ -17,3 +17,6 @@ engines:
     engine: duckduckgo
   - name: wikipedia
     engine: wikipedia
+
+valkey:
+  url: redis://redis:6379/0
