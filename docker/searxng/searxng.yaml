@@ -1,3 +1,5 @@
+use_default_settings: true
+
 server:
   base_url: https://search.oscarcorner.com/
   bind_address: "0.0.0.0"
@@ -19,13 +21,8 @@ outgoing:
 
 engines:
   - name: google
-    engine: google
-    shortcut: go
+    disabled: false
   - name: duckduckgo
-    engine: duckduckgo
-    shortcut: ddg
+    disabled: false
   - name: wikipedia
-    engine: wikipedia
-    shortcut: wp
-    display_type: ["infobox"]
-    categories: [general]
+    disabled: false
