@@ -1,0 +1,19 @@
+server:
+  base_url: https://searxng.oscarcorner.com/
+  secret_key: ${SEARXNG_SECRET_KEY}
+  bind_address: "0.0.0.0"
+  bind_port: 8080
+  listen_timeout: 120000
+
+search:
+  safe_search: 0
+  safe_search_enabled: true
+
+# Add desired engines
+engines:
+  - name: google
+    engine: google
+  - name: duckduckgo
+    engine: duckduckgo
+  - name: wikipedia
+    engine: wikipedia

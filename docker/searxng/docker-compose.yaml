@@ -1,0 +1,23 @@
+services:
+  searxng:
+    container_name: searxng
+    image: searxng/searxng:latest
+    restart: unless-stopped
+    networks:
+      - reverse-proxy-network
+    volumes:
+      - ./searxng.yml:/etc/searxng/searxng.yml:ro
+    env_file:
+      - .env
+    environment:
+      - SEARXNG_SETTINGS_PATH=/etc/searxng/searxng.yml
+    labels:
+      traefik.enable: true
+      traefik.http.routers.searxng.entrypoints: websecure
+      traefik.http.routers.searxng.rule: Host(`search.oscarcorner.com`)
+      traefik.http.services.searxng.loadbalancer.server.port: 8080
+      traefik.http.routers.searxng.tls.certresolver: route53
+
+networks:
+  reverse-proxy-network:
+    external: true
