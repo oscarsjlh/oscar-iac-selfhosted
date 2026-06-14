@@ -245,6 +245,7 @@ services:
     volumes:
       - ./configs/profilarr:/config
     environment:
+      - ORIGIN=https://profilarr.oscarcorner.com
       - PUID=1000 # Set to your user ID
       - PGID=1000 # Set to your group ID
       - UMASK=022 # Optional, defaults to 022
@@ -257,6 +258,28 @@ services:
       traefik.http.routers.profilarr.rule: Host(`profilarr.oscarcorner.com`)
       traefik.http.services.profilarr.loadbalancer.server.port: 6868
       traefik.http.routers.profilarr.tls.certresolver: route53
+  soulbeet:
+    image: docker.io/docccccc/soulbeet:latest
+    restart: unless-stopped
+    labels:
+      traefik.enable: true
+      # increase readingTimeouts for the entrypoint used here
+      traefik.http.routers.beets.entrypoints: websecure
+      traefik.http.routers.beets.rule: Host(`beets.oscarcorner.com`)
+      traefik.http.services.beets.loadbalancer.server.port: 9765
+      traefik.http.routers.beets.tls.certresolver: route53
+    environment:
+      - DATABASE_URL=sqlite:/data/soulbeet.db
+      - DOWNLOAD_PATH=/downloads
+      - NAVIDROME_URL=https://navidrome.oscarcorner.com
+      # Optional
+      - BEETS_CONFIG=/config/config.yaml
+    env_file:
+      - .env
+    volumes:
+      - ./data:/data
+      - /mnt/main/downloads/slskd/music:/music:rw
+      - /mnt/main/media/music:/music:rw
   slskd:
     environment:
       - SLSKD_REMOTE_CONFIGURATION=true
