@@ -11,10 +11,10 @@ services:
       - PORT=5055 #optional
     labels:
       traefik.enable: true
-      traefik.http.routers.searxng.entrypoints: websecure
-      traefik.http.routers.searxng.rule: Host(`requests.oscarcorner.com`)
-      traefik.http.services.searxng.loadbalancer.server.port: 5055
-      traefik.http.routers.searxng.tls.certresolver: route53
+      traefik.http.routers.seer.entrypoints: websecure
+      traefik.http.routers.seer.rule: Host(`requests.oscarcorner.com`)
+      traefik.http.services.seer.loadbalancer.server.port: 5055
+      traefik.http.routers.seer.tls.certresolver: route53
     volumes:
       - ./config:/app/config
     healthcheck:
