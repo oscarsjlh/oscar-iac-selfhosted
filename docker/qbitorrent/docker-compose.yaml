@@ -63,7 +63,7 @@ services:
       - /mnt/main/downloads/torrent:/downloads/torrent
 
   radarr:
-    image: lscr.io/linuxserver/radarr:6.1.1@sha256:c0a4335d4249b46102f64cf6fa27ffc3bddfd9138fac1e4ddf238afd37f02d1f
+    image: lscr.io/linuxserver/radarr:6.2.1@sha256:1e95b5c13fe015361a9ae1c4d99fc2336816790aaea60fa74b2ffebe076a69e0
     container_name: radarr
     environment: *common-environment
     <<: [*reverse-proxy-network, *common-restart]
@@ -82,7 +82,7 @@ services:
       traefik.http.routers.radarr.tls.certresolver: route53
 
   prowlarr:
-    image: lscr.io/linuxserver/prowlarr:2.3.5@sha256:2489c6dbaf11e3a6d71aeb2e6980d04193d4af611aa7064a974851222fd41722
+    image: lscr.io/linuxserver/prowlarr:2.4.0@sha256:7ab5769616c1929247c8e7944453253f0b777fac2724c3bc9976ae2ff4023257
     container_name: prowlarr
     environment: *common-environment
     <<: [*reverse-proxy-network, *common-restart]
@@ -99,7 +99,7 @@ services:
       traefik.http.routers.prowlarr.tls.certresolver: route53
 
   sabnzbd:
-    image: lscr.io/linuxserver/sabnzbd:5.0.4-unstable@sha256:8c00e1f81425bd27c3e0779fbf721e9fbd0bd5b7f523bf84abb05ed979d4e28d
+    image: lscr.io/linuxserver/sabnzbd:5.1.0-unstable@sha256:5604213bbc76e56bb791dc42014dffc03677457043a01a1206b3dddab5f0b4cb
     container_name: sabnzbd
     depends_on:
       - gluetun
@@ -117,7 +117,7 @@ services:
       - /mnt/main/downloads/incomplete:/incomplete-downloads
 
   sonarr-anime:
-    image: lscr.io/linuxserver/sonarr:4.0.17@sha256:0b3f344388bd7bed4f2f770058de795e76447e4a481b83c8d5f8fed489371fde
+    image: lscr.io/linuxserver/sonarr:4.0.17@sha256:02bc962946fef994e67a38152446df25c10a52f8583aefeeb6467f9dd44cab99
     container_name: sonarr-anime
     environment: *common-environment
     <<: [*reverse-proxy-network, *common-restart]
@@ -139,7 +139,7 @@ services:
       - /mnt/main/downloads/usenet:/downloads/usenet # optional
 
   sonarr:
-    image: lscr.io/linuxserver/sonarr:4.0.17@sha256:0b3f344388bd7bed4f2f770058de795e76447e4a481b83c8d5f8fed489371fde
+    image: lscr.io/linuxserver/sonarr:4.0.17@sha256:02bc962946fef994e67a38152446df25c10a52f8583aefeeb6467f9dd44cab99
     container_name: sonarr
     environment: *common-environment
     <<: [*reverse-proxy-network, *common-restart]
@@ -159,7 +159,7 @@ services:
       - /mnt/main/downloads/torrent:/downloads/torrent
       - /mnt/main/downloads/usenet:/downloads/usenet # optional
   calibre:
-    image: lscr.io/linuxserver/calibre:9.9.0@sha256:f745d349a6ef81620d6f64dd77123f4d0f20112719b5d99647c67ac4ccb29ffb
+    image: lscr.io/linuxserver/calibre:9.9.0@sha256:b9a0ea3bc064a127eda5b807b1d887235505eccefb9bcc897fa76066372af0f1
     container_name: calibre
     environment:
       - PUID=${PUID}
@@ -199,7 +199,7 @@ services:
       traefik.http.routers.calibre-web.tls.certresolver: route53
 
   bazarr:
-    image: lscr.io/linuxserver/bazarr:1.5.6@sha256:4b5e510042bf471c8bafab89cada9774fba2fb25f16ec64235151cacbe847c10
+    image: lscr.io/linuxserver/bazarr:1.5.6@sha256:8e48a2950e3806a2a914fe031fa21b1c0a0f2824eede4ea747e26213e941fbf2
     container_name: bazarr
     environment: *common-environment
     <<: [*reverse-proxy-network, *common-restart]
@@ -217,7 +217,7 @@ services:
       traefik.http.services.bazarr.loadbalancer.server.port: 6767
       traefik.http.routers.bazarr.tls.certresolver: route53
   cleanuparr:
-    image: ghcr.io/cleanuparr/cleanuparr:2.9.13@sha256:4ad626da7e1d2774ca51bbfa812f832d5639264b3fe308909e47de02ba2188f7
+    image: ghcr.io/cleanuparr/cleanuparr:2.9.14@sha256:a17be5104c2749cc8120e07dd63cb07fe8271f36fdb8f4a27ec46ddcf8581422
     container_name: cleanuparr
     restart: unless-stopped
     ports:
@@ -259,7 +259,7 @@ services:
       traefik.http.services.profilarr.loadbalancer.server.port: 6868
       traefik.http.routers.profilarr.tls.certresolver: route53
   soulbeet:
-    image: docker.io/docccccc/soulbeet:latest
+    image: docker.io/docccccc/soulbeet:latest@sha256:8a9e89d6b7e2bdd45fa34cad4c3b255ec6bcd1f68b6e15082bd247f93774976a
     <<: [*reverse-proxy-network, *common-restart]
     labels:
       traefik.enable: true
