@@ -1,7 +1,7 @@
 services:
   searxng:
     container_name: searxng
-    image: searxng/searxng:latest
+    image: searxng/searxng:latest@sha256:d0f6ccf9d3faab5bba07bb6bbeb533c47dd4ace648ed5a0f8830e10eb96b7082
     restart: unless-stopped
     env_file:
       - .env
@@ -22,7 +22,7 @@ services:
 
   valkey:
     container_name: searxng-valkey
-    image: docker.io/valkey/valkey:9-alpine
+    image: docker.io/valkey/valkey:9-alpine@sha256:a35428eba9043cc0b79dbe54100f0c92784f2de00ad09b01182bfb1c5c83d1bd
     command: valkey-server --save 30 1 --loglevel warning
     restart: unless-stopped
     volumes:
