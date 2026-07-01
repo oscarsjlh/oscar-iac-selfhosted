@@ -58,7 +58,7 @@ services:
       - reverse-proxy-network
   cadvisor:
     container_name: cadvisor
-    image: ghcr.io/google/cadvisor:v0.60.1@sha256:d48aea9d9c1bcf375917279842408703293fde88982d4610aefe75134ec69759
+    image: ghcr.io/google/cadvisor:v0.60.3@sha256:c4c44a8d178a1f3985d4aec9f0876a313cc7833ee07fe1d0d8ec63707ef7d69f
     command:
       - "-housekeeping_interval=10s"
       - "-docker_only=true"
@@ -75,7 +75,7 @@ services:
     devices:
       - "/dev/kmsg"
   grafana:
-    image: grafana/grafana:12.4.4@sha256:378f94b054e5384cd74322cbf7542cff6a43e068e4011f81ea5e75323247df02
+    image: grafana/grafana:12.4.5@sha256:26b8f35a9e4e4431995cf64c3f396505a4faf17bcfc19f9ed84943ec6bfd5ecd
     environment:
       - GF_SERVER_ROOT_URL=https://grafana.oscarcorner.com/
     labels:
@@ -155,7 +155,7 @@ services:
     networks:
       - monitoring
   loki:
-    image: grafana/loki:3.7.2@sha256:191d4fdfb7264f16989f0a57f320872620a5a7c2ceeec6229212c4190ec49b86
+    image: grafana/loki:3.7.3@sha256:70b9f699fc9bb868b62f1cfd4f787dfa50242f1fd92e6089787d5d7daea75fe8
     container_name: loki
     ports:
       - "3100:3100"

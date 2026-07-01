@@ -82,7 +82,7 @@ services:
       traefik.http.routers.radarr.tls.certresolver: route53
 
   prowlarr:
-    image: lscr.io/linuxserver/prowlarr:2.4.0@sha256:7ab5769616c1929247c8e7944453253f0b777fac2724c3bc9976ae2ff4023257
+    image: lscr.io/linuxserver/prowlarr:2.4.0@sha256:3950b5e48cf4ba9dab78fe14038dd7f062e66b7b4ab368b02c94a13f6a3dae9f
     container_name: prowlarr
     environment: *common-environment
     <<: [*reverse-proxy-network, *common-restart]
@@ -99,7 +99,7 @@ services:
       traefik.http.routers.prowlarr.tls.certresolver: route53
 
   sabnzbd:
-    image: lscr.io/linuxserver/sabnzbd:5.1.0-unstable@sha256:5604213bbc76e56bb791dc42014dffc03677457043a01a1206b3dddab5f0b4cb
+    image: lscr.io/linuxserver/sabnzbd:5.1.0-unstable@sha256:bfed9160930f7a69388b8229049613757d916badbfcbfe92788c3e40d3cb1a83
     container_name: sabnzbd
     depends_on:
       - gluetun
@@ -159,7 +159,7 @@ services:
       - /mnt/main/downloads/torrent:/downloads/torrent
       - /mnt/main/downloads/usenet:/downloads/usenet # optional
   calibre:
-    image: lscr.io/linuxserver/calibre:9.9.0@sha256:b9a0ea3bc064a127eda5b807b1d887235505eccefb9bcc897fa76066372af0f1
+    image: lscr.io/linuxserver/calibre:9.10.0@sha256:210dc050f7473197109fdc76f3809e9295566d68d2737363e60b1fc5fe170398
     container_name: calibre
     environment:
       - PUID=${PUID}
@@ -199,7 +199,7 @@ services:
       traefik.http.routers.calibre-web.tls.certresolver: route53
 
   bazarr:
-    image: lscr.io/linuxserver/bazarr:1.5.6@sha256:8e48a2950e3806a2a914fe031fa21b1c0a0f2824eede4ea747e26213e941fbf2
+    image: lscr.io/linuxserver/bazarr:1.5.6@sha256:aaaa087af75a73b7ac765dcc5d748874cfafdb93c23ec9f64fbb481dea291b23
     container_name: bazarr
     environment: *common-environment
     <<: [*reverse-proxy-network, *common-restart]
@@ -239,7 +239,7 @@ services:
       traefik.http.services.cleanuparr.loadbalancer.server.port: 11011
       traefik.http.routers.cleanuparr.tls.certresolver: route53
   profilarr:
-    image: ghcr.io/dictionarry-hub/profilarr:2.0.8@sha256:bcec9c579358163004145105c2747d3513ae75a56cd8b6c3ac759a0166d5b4af
+    image: ghcr.io/dictionarry-hub/profilarr:2.0.9@sha256:7a9b5112ff227320d17c65ab643a5d875713e6235991ef04a8e482ec51427902
     container_name: profilarr
     <<: [*reverse-proxy-network, *common-restart]
     volumes:
