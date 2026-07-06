@@ -17,7 +17,7 @@ services:
     depends_on:
       - postgresql
   postgresql:
-    image: postgres:14@sha256:3e7dd0bfd7bfb4fc1278d1a354da44375dfe924bed8eaf83ae14967d84dede5b
+    image: postgres:18@sha256:4aabea78cf39b90e834caf3af7d602a18565f6fe2508705c8d01aa63245c2e20
     restart: unless-stopped
     volumes: # Don't remove permanent storage for index database files!
       - "./database:/var/lib/postgresql/data/"
