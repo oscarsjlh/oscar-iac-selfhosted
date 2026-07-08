@@ -75,7 +75,7 @@ services:
     devices:
       - "/dev/kmsg"
   grafana:
-    image: grafana/grafana:12.4.5@sha256:26b8f35a9e4e4431995cf64c3f396505a4faf17bcfc19f9ed84943ec6bfd5ecd
+    image: grafana/grafana:13.1.0@sha256:121a7a9ece6dc10b969f1f96eed64b4f07dfac0d0b8abc070f7cb83bbde86f63
     environment:
       - GF_SERVER_ROOT_URL=https://grafana.oscarcorner.com/
     labels:
@@ -93,7 +93,7 @@ services:
       - monitoring
       - reverse-proxy-network
   tempo:
-    image: grafana/tempo:2.10.7@sha256:032b3acb51ed02c4b801473d54bb63e9e9f13738d215126d9843c30283794f4b
+    image: grafana/tempo:3.0.2@sha256:cda87c212d8c584dc0b89e337e7ed648a5100feb657e5d528480ee4fa03dbbe3
     container_name: tempo
     command: -config.file=/etc/tempo/tempo.yaml
     restart: unless-stopped
