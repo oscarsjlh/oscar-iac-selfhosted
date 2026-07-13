@@ -4,7 +4,7 @@ services:
       - reverse-proxy-network
     container_name: dns-server
     hostname: dns-server
-    image: technitium/dns-server:15.3.0@sha256:c5ea91d9018688ef7e671fbbba2b7c0ff6434b0cc18b4edfa6a68142b39984eb
+    image: technitium/dns-server:15.4.0@sha256:df7d90ef0f7b6fff6916d291a7022cd902290cc31c3141d4158b6c375a641b41
     # For DHCP deployments, use "host" network mode and remove all the port mappings, including the ports array by commenting them
     # network_mode: "host"
     ports:

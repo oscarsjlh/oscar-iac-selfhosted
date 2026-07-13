@@ -9,7 +9,7 @@ volumes:
   tempo_data: {}
 services:
   node-exporter:
-    image: prom/node-exporter:v1.11.1@sha256:e9cff4fc67b1818f8c97adb115b9f12c9a54b533de86765d4a0effc01b357205
+    image: prom/node-exporter:v1.12.0@sha256:9b0ade5e607f9dbedb0a8e11151b6011ae5bd79304c261804cfdd2cadf200a80
     container_name: node-exporter
     restart: unless-stopped
     volumes:
@@ -29,7 +29,7 @@ services:
       - monitoring
 
   prometheus:
-    image: prom/prometheus:v3.13.0@sha256:c6b27ea434f8389bfe233fbc7be381cf50587c286e871bc842008f5a1b1908a7
+    image: prom/prometheus:v3.13.1@sha256:3c42b892cf723fa54d2f262c37a0e1f80aa8c8ddb1da7b9b0df9455a35a7f893
     container_name: prometheus
     restart: unless-stopped
     volumes:
@@ -58,7 +58,7 @@ services:
       - reverse-proxy-network
   cadvisor:
     container_name: cadvisor
-    image: ghcr.io/google/cadvisor:v0.60.3@sha256:c4c44a8d178a1f3985d4aec9f0876a313cc7833ee07fe1d0d8ec63707ef7d69f
+    image: ghcr.io/google/cadvisor:v0.60.5@sha256:763aecf1c32c2be8a1a75f9abfc2fc461005c9dbbaa39cb356b354aac1296dbe
     command:
       - "-housekeeping_interval=10s"
       - "-docker_only=true"
