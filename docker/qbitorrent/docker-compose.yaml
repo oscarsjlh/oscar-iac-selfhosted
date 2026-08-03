@@ -32,7 +32,7 @@ services:
       - WIREGUARD_PRESHARED_KEY=${WIREGUARD_PRESHARED_KEY}
       - FIREWALL_VPN_INPUT_PORTS=6147
       - WIREGUARD_ADDRESSES=10.145.70.146/32
-    image: qmcgaw/gluetun:v3.41.1@sha256:1a5bf4b4820a879cdf8d93d7ef0d2d963af56670c9ebff8981860b6804ebc8ab
+    image: qmcgaw/gluetun:v3.41.3@sha256:fa19cc76b2af13d57a8d3dc3066f2ada061b1c761b8aecf989b3877c0486e027
     networks:
       - reverse-proxy-network
     ports:
@@ -63,7 +63,7 @@ services:
       - /mnt/main/downloads/torrent:/downloads/torrent
 
   radarr:
-    image: lscr.io/linuxserver/radarr:6.3.0@sha256:e35056574cdc695a9ee745aa1ecda9eab3842450bf4b7b8471b023790fa3861d
+    image: lscr.io/linuxserver/radarr:6.3.0@sha256:a45b5ab0f850f39edb4cc9c95bbd967b52ddc3d4574a4dfb45561177db6c88f4
     container_name: radarr
     environment: *common-environment
     <<: [*reverse-proxy-network, *common-restart]
@@ -99,7 +99,7 @@ services:
       traefik.http.routers.prowlarr.tls.certresolver: route53
 
   sabnzbd:
-    image: lscr.io/linuxserver/sabnzbd:5.1.0-unstable@sha256:5dc5aec84f8d04df247efa2d8a1ada4925d7af988cccd0689f037cad5e28d212
+    image: lscr.io/linuxserver/sabnzbd:5.1.0-unstable@sha256:679100ea3355b7bebc77251b9731bee720422d494baf862d54d88022f7dae618
     container_name: sabnzbd
     depends_on:
       - gluetun
@@ -159,7 +159,7 @@ services:
       - /mnt/main/downloads/torrent:/downloads/torrent
       - /mnt/main/downloads/usenet:/downloads/usenet # optional
   calibre:
-    image: lscr.io/linuxserver/calibre:9.11.0@sha256:150db5b3789125a31589a6d296c7419b61ad692e541ee1da78609d8bec9cd4c9
+    image: lscr.io/linuxserver/calibre:9.12.0@sha256:6a8c39ee79afe4f7ebb37e50b8d973fa3d21882a6517455a738b96c8e9f27c43
     container_name: calibre
     environment:
       - PUID=${PUID}
@@ -217,7 +217,7 @@ services:
       traefik.http.services.bazarr.loadbalancer.server.port: 6767
       traefik.http.routers.bazarr.tls.certresolver: route53
   cleanuparr:
-    image: ghcr.io/cleanuparr/cleanuparr:2.10.0@sha256:9f74fa60bbf84c82b86f69fbef75189dd3e38408f99fd9c1895736185c4620b9
+    image: ghcr.io/cleanuparr/cleanuparr:2.10.3@sha256:31f93b0f8eff9fe87c5cb7779276905144bc297b1a67cd77887d8eb168b1af2a
     container_name: cleanuparr
     restart: unless-stopped
     ports:
