@@ -297,7 +297,6 @@ services:
     volumes:
       - ./configs/slskd:/app:rw
       - /mnt/main/downloads/slskd/music:/music:rw
-      - /mnt/main/downloads/slskd/music/organizer.sh:/organizer.sh
       - /mnt/main/downloads/slskd:/books:ro
       - "/mnt/nas/media/music:/organized-music:rw"
     user: 1000:1000
