@@ -1,7 +1,7 @@
 services:
   atuin:
     restart: always
-    image: ghcr.io/atuinsh/atuin:18.17.0@sha256:d0686408d2b5389606fbd6a500e62c57f3afcf4b1b2f4086421160afdedbf46b
+    image: ghcr.io/atuinsh/atuin:18.18.1@sha256:8573bcd8343325e3de6f8322787881faeb9e82bee703b5969a55005b69d62e24
     command: start
     volumes:
       - "./config:/config"
@@ -17,7 +17,7 @@ services:
     depends_on:
       - postgresql
   postgresql:
-    image: postgres:14@sha256:9e279cc7fc6e908da071befe389c576bd6752dbd295a9c078f96a75bab03e54c
+    image: postgres:14@sha256:caf49e3b10d377aa2cfee478591d623808527beb27125d38797b418013f72d81
     restart: unless-stopped
     volumes: # Don't remove permanent storage for index database files!
       - "./database:/var/lib/postgresql/data/"
