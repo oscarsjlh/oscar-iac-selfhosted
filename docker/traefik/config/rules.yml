@@ -6,6 +6,13 @@ http:
         - websecure
       tls: {}
       service: git-service
+    technitium-router:
+      rule: Host(`dns2.oscarcorner.com`)
+      entrypoints:
+        - websecure
+      tls: {}
+      service: dns-service
+
     doh:
       entryPoints:
         - "websecure"
@@ -76,6 +83,10 @@ http:
       loadBalancer:
         servers:
           - url: http://dns-server:8053
+    dns-service:
+      loadBalancer:
+        servers:
+          - url: http://192.168.1.108:5380
     git-service:
       loadBalancer:
         servers:
