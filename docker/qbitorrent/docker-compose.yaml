@@ -73,6 +73,7 @@ services:
       - ./configs/radarr:/config
       - /mnt/nas/media/movies:/movies # optional
       - /mnt/main/downloads/torrent:/downloads/torrent
+      - /mnt/main/downloads/usenet:/downloads/usenet
     labels:
       traefik.enable: true
       # increase readingTimeouts for the entrypoint used here
