@@ -100,7 +100,7 @@ services:
       traefik.http.routers.prowlarr.tls.certresolver: route53
 
   sabnzbd:
-    image: lscr.io/linuxserver/sabnzbd:5.1.0-unstable@sha256:7693b62255d1dbfc544def4ed354a5e46361eb20bc5bd91b034f0a3901b5198a
+    image: lscr.io/linuxserver/sabnzbd:5.1.0-unstable@sha256:8841e4fff65237110baa94bcee6165445da414c6c6db35d030a7064a78577a37
     container_name: sabnzbd
     depends_on:
       - gluetun
@@ -200,7 +200,7 @@ services:
       traefik.http.routers.calibre-web.tls.certresolver: route53
 
   bazarr:
-    image: lscr.io/linuxserver/bazarr:1.6.0@sha256:e464484e7e6cff8ee189036c9ba96977ab054104ea18067ecf6171d0f3f3f8f2
+    image: lscr.io/linuxserver/bazarr:1.6.0@sha256:45a0ba295f5ca41c2cf1853ecedc099fb6f23dabbc80b8c1a73cd85eb195b60c
     container_name: bazarr
     environment: *common-environment
     <<: [*reverse-proxy-network, *common-restart]
@@ -218,7 +218,7 @@ services:
       traefik.http.services.bazarr.loadbalancer.server.port: 6767
       traefik.http.routers.bazarr.tls.certresolver: route53
   cleanuparr:
-    image: ghcr.io/cleanuparr/cleanuparr:2.10.3@sha256:31f93b0f8eff9fe87c5cb7779276905144bc297b1a67cd77887d8eb168b1af2a
+    image: ghcr.io/cleanuparr/cleanuparr:2.10.5@sha256:c7cd53ad559a67147637de3d825f66ef6e6a5498490b73f49c6e4d72f13bed76
     container_name: cleanuparr
     restart: unless-stopped
     ports:
