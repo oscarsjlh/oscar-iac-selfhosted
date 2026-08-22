@@ -1,5 +1,7 @@
 [sources.docker_logs]
 type = "docker_logs"
+docker_host = "unix:///var/run/docker.sock"
+auto_partial_merge = true
 
 [sources.journald]
 type = "journald"
@@ -145,4 +147,3 @@ encoding.codec = "json"
 
 [sinks.loki.labels]
 "*" = "{{ loki_labels }}"
-
