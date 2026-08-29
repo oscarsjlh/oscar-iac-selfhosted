@@ -1,3 +1,5 @@
+x-worker-image: &worker-image registry.oscarcorner.com/yt-dlp-worker@sha256:36318a63338ddc4ba8abab215de5dfc79a1521777dc330af3b5064ed6c811ae7
+
 services:
   # Frontend - Caddy web server serving static files and proxying API requests
   frontend:
@@ -27,10 +29,10 @@ services:
     group_add:
       - 971
     environment:
-      - YT_DLP_DOWNLOAD_DIR=/downloads
-      - YT_DLP_MAX_CONCURRENT=3
-      - YT_DLP_IMAGE=yt-dlp-worker:latest
-      - YT_DLP_VOLUME_NAME=downloads
+      YT_DLP_DOWNLOAD_DIR: /downloads
+      YT_DLP_MAX_CONCURRENT: "3"
+      YT_DLP_IMAGE: *worker-image
+      YT_DLP_VOLUME_NAME: downloads
     volumes:
       - downloads:/downloads
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -43,7 +45,7 @@ services:
   # yt-dlp worker (used by backend via docker run)
   # This service is built but not run directly - backend spawns containers from this image
   ytdlp-worker:
-    image: registry.oscarcorner.com/yt-dlp-worker@sha256:36318a63338ddc4ba8abab215de5dfc79a1521777dc330af3b5064ed6c811ae7
+    image: *worker-image
     networks:
       - reverse-proxy-network
     volumes:
