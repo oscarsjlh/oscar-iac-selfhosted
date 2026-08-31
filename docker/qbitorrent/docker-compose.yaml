@@ -83,7 +83,7 @@ services:
       traefik.http.routers.radarr.tls.certresolver: route53
 
   prowlarr:
-    image: lscr.io/linuxserver/prowlarr:2.5.2@sha256:1295cff29d10b486c0d8324d1559a552140a5932bf8b3d87e398654414f63f92
+    image: lscr.io/linuxserver/prowlarr:2.5.2@sha256:ab91301778251f82a31bbfc87f0497376d59e84439d9a1ceff6a61d594d1e3d7
     container_name: prowlarr
     environment: *common-environment
     <<: [*reverse-proxy-network, *common-restart]
@@ -100,7 +100,7 @@ services:
       traefik.http.routers.prowlarr.tls.certresolver: route53
 
   sabnzbd:
-    image: lscr.io/linuxserver/sabnzbd:5.1.1-unstable@sha256:e189d9921179db4f80a4b8961ef0d14b558e45e21435c5a5c1791aedd2ce31e1
+    image: lscr.io/linuxserver/sabnzbd:5.1.2-unstable@sha256:dcc56bd6953a7b0b5edac883a9dfcbf6fe1d724518483b863ee10362c52847f1
     container_name: sabnzbd
     depends_on:
       - gluetun
@@ -160,7 +160,7 @@ services:
       - /mnt/main/downloads/torrent:/downloads/torrent
       - /mnt/main/downloads/usenet:/downloads/usenet # optional
   calibre:
-    image: lscr.io/linuxserver/calibre:9.13.0@sha256:fc0c3b0375e1e078f52f26abb94641291d4aed146fa6d0abe813443459be5e2f
+    image: lscr.io/linuxserver/calibre:9.14.0@sha256:aab1217345dd3f1f25aa0182cefa41909316fd44eb1e914e9836f79f44208b1f
     container_name: calibre
     environment:
       - PUID=${PUID}
@@ -200,7 +200,7 @@ services:
       traefik.http.routers.calibre-web.tls.certresolver: route53
 
   bazarr:
-    image: lscr.io/linuxserver/bazarr:1.6.0@sha256:ac284d3fda9ee7da8b15197dc51f0d7a2a1da98549bee99a3d924d3e94a5e7ed
+    image: lscr.io/linuxserver/bazarr:1.6.0@sha256:3a820372f19fcb2981ea19fe4b5382934d67414afaba974bce831ddda0a64a02
     container_name: bazarr
     environment: *common-environment
     <<: [*reverse-proxy-network, *common-restart]
