@@ -1,4 +1,4 @@
-x-worker-image: &worker-image registry.oscarcorner.com/yt-dlp-worker@sha256:36318a63338ddc4ba8abab215de5dfc79a1521777dc330af3b5064ed6c811ae7
+x-worker-image: &worker-image registry.oscarcorner.com/yt-dlp-worker@sha256:232c42cf4763e6de113c242d359c524f9eb08cf01f0e11ace4753eb7b3638e1f
 
 services:
   # Frontend - Caddy web server serving static files and proxying API requests
