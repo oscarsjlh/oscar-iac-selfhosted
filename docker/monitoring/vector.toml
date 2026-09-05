@@ -1,7 +1,21 @@
+# Vector pipeline: docker_logs / journald / syslog -> Loki
+#
+# Design goals:
+# - Keep Loki log LINES clean: only the original log message, nothing else.
+# - Extract `level` at ingest time so `{job="docker", level="error"}` works
+#   without query-time parsing.
+# - Keep Loki labels low-cardinality: job / project / service / container.
+# - Drop noisy Docker metadata (full label blob, container ids, digests)
+#   before it reaches Loki.
+
+data_dir = "/var/lib/vector"
+
 [sources.docker_logs]
 type = "docker_logs"
 docker_host = "unix:///var/run/docker.sock"
 auto_partial_merge = true
+# Never ingest our own stdout (console sink) to avoid a feedback loop.
+exclude_containers = ["vector"]
 
 [sources.journald]
 type = "journald"
@@ -12,61 +26,124 @@ type = "syslog"
 mode = "udp"
 address = "0.0.0.0:514"
 
-
-[transforms.syslog_parse]
+# ---------------------------------------------------------------------------
+# Docker container logs
+# ---------------------------------------------------------------------------
+[transforms.docker_parse]
 type = "remap"
-inputs = ["syslog"]
+inputs = ["docker_logs"]
 source = '''
-# Extract fields from syslog
-.source_host = .hostname
-.app_name = .appname || "unknown"
-.facility = .facility || "unknown"
-.severity = .severity || "info"
-.message = string!(.message)
+msg = string!(.message)
 
-# Map severity to log level
-.level = if .severity == 0 {
-  "emergency"
-} else if .severity == 1 {
-  "alert"
-} else if .severity == 2 {
-  "critical"
-} else if .severity == 3 {
-  "error"
-} else if .severity == 4 {
+# --- identity (from compose labels, with sensible fallbacks) ---
+svc = get(.label, ["com.docker.compose.service"]) ?? get(., ["container_name"]) ?? null
+.service = if svc == null { "unknown" } else { to_string!(svc) }
+
+prj = get(.label, ["com.docker.compose.project"]) ?? null
+.project = if prj == null { "unknown" } else { to_string!(prj) }
+
+cname = get(., ["container_name"]) ?? null
+.container_label = if cname == null { "unknown" } else { to_string!(cname) }
+
+# --- level detection ---
+level = null
+
+# 1) Structured JSON logs: look for common level-ish keys
+parsed, err = parse_json(msg)
+if err == null && is_object(parsed) {
+  raw = get(parsed, ["level"]) ?? get(parsed, ["severity"]) ?? get(parsed, ["lvl"]) ?? get(parsed, ["loglevel"]) ?? null
+  if raw != null {
+    s, err = to_string(raw)
+    if err == null {
+      level = downcase(s)
+    }
+  }
+}
+
+# 2) Textual markers: level=error, "level": "warn", [ERROR], severity: crit...
+if level == null {
+  found, err = parse_regex(msg, r'(?i)(?:\b(?:level|lvl|severity|loglevel)["\']?\s*[:=]\s*["\']?|\[)(?P<lvl>trace|debug|info|notice|warn(?:ing)?|err(?:or)?|fatal|panic|crit(?:ical)?|emerg(?:ency)?)\b')
+  if err == null {
+    grp, err = get(found, ["lvl"])
+    if err == null {
+      level = downcase(to_string!(grp))
+    }
+  }
+}
+
+# 3) Level keyword near the start of the line (after optional timestamp):
+#    "FATAL: ...", "2026-09-05 10:11:32 ERROR: ..."
+if level == null {
+  found, err = parse_regex(msg, r'(?i)^\s*(?:[\dT:.+Z-]+\s+){0,2}(?P<lvl>trace|debug|info|notice|warn(?:ing)?|err(?:or)?|fatal|panic|crit(?:ical)?)\s*[:\-\]]')
+  if err == null {
+    grp, err = get(found, ["lvl"])
+    if err == null {
+      level = downcase(to_string!(grp))
+    }
+  }
+}
+
+# 4) Normalize to a fixed set of buckets Grafana understands
+.level = if level == "trace" || level == "debug" {
+  "debug"
+} else if level == "info" || level == "notice" {
+  "info"
+} else if level == "warn" || level == "warning" {
   "warning"
-} else if .severity == 5 {
-  "notice"
-} else if .severity == 6 {
+} else if level == "err" || level == "error" || level == "fatal" || level == "panic" || level == "crit" || level == "critical" || level == "emerg" || level == "emergency" || level == "alert" {
+  "error"
+} else {
+  "info"
+}
+
+# --- drop everything except the clean line + labels ---
+# With the "text" codec below, only .message becomes the Loki line, but prune
+# the event anyway so the console sink stays readable.
+del(.label)
+del(.container_id)
+del(.container_created_at)
+del(.source_type)
+del(.stream)
+del(.host)
+del(.image)
+
+.loki_labels = {
+  "job": "docker",
+  "project": .project,
+  "service": .service,
+  "container": .container_label,
+  "level": .level,
+}
+
+del(.container_label)
+'''
+
+# ---------------------------------------------------------------------------
+# journald / systemd
+# ---------------------------------------------------------------------------
+[transforms.journald_parse]
+type = "remap"
+inputs = ["journald"]
+source = '''
+.message = string!(.MESSAGE)
+u = get(., ["_SYSTEMD_UNIT"]) ?? null
+.unit = if u == null { "unknown" } else { to_string!(u) }
+si = get(., ["SYSLOG_IDENTIFIER"]) ?? null
+.syslog_identifier = if si == null { "unknown" } else { to_string!(si) }
+
+# Map syslog priority (0-7) to level buckets
+prio = to_int(.PRIORITY) ?? 6
+.level = if prio <= 2 {
+  "error"
+} else if prio == 3 {
+  "error"
+} else if prio == 4 {
+  "warning"
+} else if prio <= 6 {
   "info"
 } else {
   "debug"
 }
-'''
-
-[transforms.syslog_labels]
-type = "remap"
-inputs = ["syslog_parse"]
-source = '''
-.loki_labels = {
-  "job": "syslog",
-  "host": .source_host,
-  "app": .app_name,
-  "facility": .facility,
-  "level": .level
-}
-'''
-
-[transforms.normalize]
-type = "remap"
-inputs = ["journald"]
-source = '''
-.timestamp = ._SOURCE_REALTIME_TIMESTAMP
-.message = .MESSAGE
-.host = get_hostname!()
-.unit = ._SYSTEMD_UNIT || "unknown"
-.level = .PRIORITY || "unknown"
-.syslog_identifier = .SYSLOG_IDENTIFIER || "unknown"
 
 # Identify if this is a cron-related job
 .is_cron = if match(string!(.unit), r'^(cron|.*\.timer)') || match(string!(.syslog_identifier), r'(CRON|cron)') {
@@ -74,76 +151,73 @@ source = '''
 } else {
   "false"
 }
-'''
 
-[transforms.journald_labels]
-type = "remap"
-inputs = ["normalize"]
-source = '''
 .loki_labels = {
   "job": "systemd",
-  "host": .host,
+  "host": get_hostname!(),
   "unit": .unit,
   "level": .level,
   "is_cron": .is_cron,
-  "syslog_identifier": .syslog_identifier
+  "syslog_identifier": .syslog_identifier,
 }
 '''
 
-[transforms.parse_and_enrich]
+# ---------------------------------------------------------------------------
+# Syslog over UDP
+# ---------------------------------------------------------------------------
+[transforms.syslog_parse]
 type = "remap"
-inputs = ["docker_logs"]
+inputs = ["syslog"]
 source = '''
-msg = string(.message) ?? ""
-parsed, err = parse_json(msg)
-if err == null && is_object(parsed) {
-  .log = parsed
-  if exists(.log.level) {
-    .level = string!(.log.level)
-  } else {
-    .level = "info"
-  }
-} else {
-  .level = "info"
-}
-'''
+h = get(., ["hostname"]) ?? null
+.source_host = if h == null { "unknown" } else { to_string!(h) }
+a = get(., ["appname"]) ?? null
+.app_name = if a == null { "unknown" } else { to_string!(a) }
+f = get(., ["facility"]) ?? null
+.facility = if f == null { "unknown" } else { to_string!(f) }
 
-[transforms.docker_labels]
-type = "remap"
-inputs = ["parse_and_enrich"]
-source = '''
-.service = if exists(.label."com.docker.compose.service") {
-  string!(.label."com.docker.compose.service")
+# Map syslog severity (0-7) to level buckets
+sev = to_int(.severity) ?? 6
+.level = if sev <= 2 {
+  "error"
+} else if sev == 3 {
+  "error"
+} else if sev == 4 {
+  "warning"
+} else if sev <= 6 {
+  "info"
 } else {
-  "unknown"
-}
-.project = if exists(.label."com.docker.compose.project") {
-  string!(.label."com.docker.compose.project")
-} else {
-  "unknown"
+  "debug"
 }
 
 .loki_labels = {
-  "job": "docker",
-  "container": .container_name,
-  "image": .image,
-  "service": .service,
-  "project": .project,
-  "level": .level
+  "job": "syslog",
+  "host": .source_host,
+  "app": .app_name,
+  "facility": .facility,
+  "level": .level,
 }
 '''
 
+# ---------------------------------------------------------------------------
+# Sinks
+# ---------------------------------------------------------------------------
+
+# Debug output: shows the cleaned events on Vector's stdout
 [sinks.console]
 type = "console"
-inputs = ["parse_and_enrich"]
+inputs = ["docker_parse"]
 target = "stdout"
 encoding.codec = "json"
+
 [sinks.loki]
 type = "loki"
-inputs = ["journald_labels", "docker_labels", "syslog_labels"]
+inputs = ["docker_parse", "journald_parse", "syslog_parse"]
 endpoint = "http://loki:3100"
 compression = "gzip"
-encoding.codec = "json"
+# Send only the log message as the line, not the whole event. Parse at query
+# time in Loki instead (| json, | logfmt), now that the line is clean.
+encoding.codec = "text"
 
 [sinks.loki.labels]
 "*" = "{{ loki_labels }}"
