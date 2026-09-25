@@ -94,7 +94,7 @@ services:
     # NOTE: pinned to 3.x — Paperless-ngx does not yet support Tika 4
     # (this is the same version paperless-ngx pins in their official compose).
     # Do not merge a Renovate PR bumping this to 4.x until paperless adds support.
-    image: docker.io/apache/tika:3.3.1
+    image: docker.io/apache/tika:3.3.1.0
     restart: unless-stopped
     networks:
       - reverse-proxy-network
