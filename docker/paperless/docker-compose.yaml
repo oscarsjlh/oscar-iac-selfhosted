@@ -1,0 +1,101 @@
+name: paperless
+
+services:
+  webserver:
+    container_name: paperless_webserver
+    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      broker:
+        condition: service_healthy
+      gotenberg:
+        condition: service_started
+      tika:
+        condition: service_started
+    volumes:
+      - ./data:/usr/src/paperless/data
+      - ./media:/usr/src/paperless/media
+      - ./export:/usr/src/paperless/export
+      - ./consume:/usr/src/paperless/consume
+    env_file:
+      - .env
+    environment:
+      PAPERLESS_REDIS: redis://broker:6379
+      PAPERLESS_DBHOST: db
+      PAPERLESS_DBPORT: 5432
+      PAPERLESS_DBNAME: paperless
+      PAPERLESS_DBUSER: paperless
+      PAPERLESS_DBPASS: ${PAPERLESS_DBPASS:?Set in .env}
+      PAPERLESS_SECRET_KEY: ${PAPERLESS_SECRET_KEY:?Set in .env}
+      # Web/CSRF config for the Traefik HTTPS frontend
+      PAPERLESS_URL: https://paperless.oscarcorner.com
+      PAPERLESS_CSRF_TRUSTED_ORIGINS: https://paperless.oscarcorner.com
+      # Tika + Gotenberg enable Office document support (.docx, .odt, .xlsx, ...)
+      PAPERLESS_TIKA_ENABLED: 1
+      PAPERLESS_TIKA_ENDPOINT: http://tika:9998
+      PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://gotenberg:3000
+    networks:
+      - reverse-proxy-network
+    labels:
+      traefik.enable: true
+      traefik.http.routers.paperless.entrypoints: websecure
+      traefik.http.routers.paperless.rule: Host(`paperless.oscarcorner.com`)
+      traefik.http.services.paperless.loadbalancer.server.port: 8000
+      traefik.http.routers.paperless.tls.certresolver: route53
+
+  broker:
+    container_name: paperless_broker
+    image: docker.io/library/redis:8
+    restart: unless-stopped
+    volumes:
+      - ./redisdata:/data
+    networks:
+      - reverse-proxy-network
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+
+  db:
+    container_name: paperless_db
+    image: docker.io/library/postgres:17
+    restart: unless-stopped
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: paperless
+      POSTGRES_USER: paperless
+      POSTGRES_PASSWORD: ${PAPERLESS_DBPASS:?Set in .env}
+    networks:
+      - reverse-proxy-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U paperless -d paperless"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+
+  gotenberg:
+    container_name: paperless_gotenberg
+    image: docker.io/gotenberg/gotenberg:8
+    restart: unless-stopped
+    # The official Paperless-ngx image expects these chromium flags
+    command:
+      - "gotenberg"
+      - "--chromium-disable-javascript=true"
+      - "--chromium-allow-list=file:///tmp/.*"
+    networks:
+      - reverse-proxy-network
+
+  tika:
+    container_name: paperless_tika
+    image: docker.io/apache/tika:latest
+    restart: unless-stopped
+    networks:
+      - reverse-proxy-network
+
+networks:
+  reverse-proxy-network:
+    external: true

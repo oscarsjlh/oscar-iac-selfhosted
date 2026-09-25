@@ -31,12 +31,19 @@ check() {
 echo -e "\e[32mStarting backup script \e[0m"
 echo ""
 
+# Dump Paperless-ngx database so restic captures a consistent copy
+mkdir -p /home/oscar/paperless/export
+docker exec paperless_db pg_dump -U paperless paperless > /home/oscar/paperless/export/paperless-db.sql || curl -d "Paperless pg_dump failed" https://ntfy.oscorner.com/backups-oscar
+
 OUTPUT=$(restic backup /mnt/nfs/media/music/ \
 	/home/oscar/jellyfin/config \
 	/mnt/nas/media/photos/immich/library \
 	/home/oscar/forgejo-backup \
 	/home/oscar/qbitorrent/configs/ \
 	/home/oscar/technitium \
+	/home/oscar/paperless/data \
+	/home/oscar/paperless/media \
+	/home/oscar/paperless/export \
 	/mnt/nfs/backup/ \
 	/mnt/smb_backup/ \
 	--exclude-file /home/oscar/backup/excludes.txt \

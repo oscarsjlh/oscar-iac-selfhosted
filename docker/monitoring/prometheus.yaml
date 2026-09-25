@@ -58,6 +58,7 @@ scrape_configs:
           - https://radarr.oscarcorner.com
           - https://traefik-docker.oscarcorner.com
           - https://immich.oscarcorner.com
+          - https://paperless.oscorner.com
           - https://navidrome.oscarcorner.com
     relabel_configs:
       - source_labels: [__address__]
