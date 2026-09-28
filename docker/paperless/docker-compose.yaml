@@ -3,7 +3,7 @@ name: paperless
 services:
   webserver:
     container_name: paperless_webserver
-    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    image: ghcr.io/paperless-ngx/paperless-ngx:latest@sha256:5fa76604a81df6945086e0837b14b56543d137e8ce4f311cc5d9ebe907e74e79
     restart: unless-stopped
     depends_on:
       db:
@@ -47,7 +47,7 @@ services:
 
   broker:
     container_name: paperless_broker
-    image: docker.io/library/redis:8
+    image: docker.io/library/redis:8@sha256:718f745deb7dfefeac6eed7041fc7ec9476b50e61b247932682457c41adafa0e
     restart: unless-stopped
     volumes:
       - ./redisdata:/data
@@ -61,7 +61,7 @@ services:
 
   db:
     container_name: paperless_db
-    image: docker.io/library/postgres:17
+    image: docker.io/library/postgres:17@sha256:d74eeac9a635390a49bc21bd49fccd973de707e2a53a76ac49b552b8712ec46f
     restart: unless-stopped
     volumes:
       - ./pgdata:/var/lib/postgresql/data
@@ -79,7 +79,7 @@ services:
 
   gotenberg:
     container_name: paperless_gotenberg
-    image: docker.io/gotenberg/gotenberg:8
+    image: docker.io/gotenberg/gotenberg:8@sha256:f29984bd1e226bf1b93ba90af06000afa8b315853e99d27b9aaa41b93f15c769
     restart: unless-stopped
     # The official Paperless-ngx image expects these chromium flags
     command:
@@ -94,7 +94,7 @@ services:
     # NOTE: pinned to 3.x — Paperless-ngx does not yet support Tika 4
     # (this is the same version paperless-ngx pins in their official compose).
     # Do not merge a Renovate PR bumping this to 4.x until paperless adds support.
-    image: docker.io/apache/tika:3.3.1.0
+    image: docker.io/apache/tika:3.3.1.0@sha256:90b7fa1dc018434075fce9e1d9b88b1e3d0ea6979d0cf86e116c79a8073ae973
     restart: unless-stopped
     networks:
       - reverse-proxy-network
