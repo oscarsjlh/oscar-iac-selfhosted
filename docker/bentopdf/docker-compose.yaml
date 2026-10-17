@@ -1,0 +1,26 @@
+services:
+  bentopdf:
+    container_name: bentopdf
+    image: ghcr.io/alam00000/bentopdf-simple:latest@sha256:3d62b8f8eece5fe947026ac3925ff08fda245b3d6ba2c3916b94da91e0010c74
+    restart: unless-stopped
+    networks:
+      - reverse-proxy-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8080"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    labels:
+      traefik.enable: true
+      traefik.http.routers.bentopdf.entrypoints: websecure
+      traefik.http.routers.bentopdf.rule: Host(`pdf.oscarcorner.com`)
+      traefik.http.services.bentopdf.loadbalancer.server.port: 8080
+      traefik.http.routers.bentopdf.tls.certresolver: route53
+      # Required for SharedArrayBuffer support in Office file conversions.
+      traefik.http.routers.bentopdf.middlewares: bentopdf-headers
+      traefik.http.middlewares.bentopdf-headers.headers.customresponseheaders.Cross-Origin-Opener-Policy: same-origin
+      traefik.http.middlewares.bentopdf-headers.headers.customresponseheaders.Cross-Origin-Embedder-Policy: require-corp
+
+networks:
+  reverse-proxy-network:
+    external: true
