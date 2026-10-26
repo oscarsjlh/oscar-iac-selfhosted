@@ -102,6 +102,12 @@ services:
   sabnzbd:
     image: lscr.io/linuxserver/sabnzbd:5.2.0-unstable@sha256:468efa4915b2674a6d48d5973c426a9f0cc72389f95af5761264e54f35290cd9
     container_name: sabnzbd
+    # Keep downloads, repair, and unpacking within the host resource budget.
+    cpus: 1.0
+    # Allow space for the existing 1 GiB download cache and the application.
+    mem_limit: 1536m
+    # Equal memory and memory+swap limits disable container swap.
+    memswap_limit: 1536m
     depends_on:
       - gluetun
     environment: *common-environment

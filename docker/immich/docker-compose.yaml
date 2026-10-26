@@ -12,6 +12,11 @@ name: immich
 services:
   immich-server:
     container_name: immich_server
+    # Leave CPU and RAM available for the host and other services.
+    cpus: 2.0
+    mem_limit: 2560m
+    # Equal memory and memory+swap limits disable container swap.
+    memswap_limit: 2560m
     image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
     networks:
       - reverse-proxy-network
@@ -42,6 +47,9 @@ services:
 
   immich-machine-learning:
     container_name: immich_machine_learning
+    cpus: 1.0
+    mem_limit: 1g
+    memswap_limit: 1g
     # For hardware acceleration, add one of -[armnn, cuda, rocm, openvino, rknn] to the image tag.
     # Example tag: ${IMMICH_VERSION:-release}-cuda
     image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
@@ -68,6 +76,9 @@ services:
 
   redis:
     container_name: immich_redis
+    cpus: 0.5
+    mem_limit: 256m
+    memswap_limit: 256m
     image: docker.io/valkey/valkey:9@sha256:418652cfb58ef879d4978c33553735d7147016032d5aefaa14c828e611eb9dfd
     networks:
       - reverse-proxy-network
@@ -77,6 +88,9 @@ services:
 
   database:
     container_name: immich_postgres
+    cpus: 1.0
+    mem_limit: 768m
+    memswap_limit: 768m
     image: ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0@sha256:bcf63357191b76a916ae5eb93464d65c07511da41e3bf7a8416db519b40b1c23
     user: "1000:1000"
     networks:
