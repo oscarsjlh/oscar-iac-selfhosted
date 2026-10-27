@@ -3,6 +3,11 @@ name: paperless
 services:
   webserver:
     container_name: paperless_webserver
+    # Leave CPU and RAM available for the host, including during OCR.
+    cpus: 2.0
+    mem_limit: 1536m
+    # Equal memory and memory+swap limits disable container swap.
+    memswap_limit: 1536m
     image: ghcr.io/paperless-ngx/paperless-ngx:latest@sha256:9bc6e8248891bcfa6f52fffe8b81e4ea8cae75790c3ec1b9906961a7ba55c969
     restart: unless-stopped
     depends_on:
@@ -47,6 +52,9 @@ services:
 
   broker:
     container_name: paperless_broker
+    cpus: 0.25
+    mem_limit: 128m
+    memswap_limit: 128m
     image: docker.io/library/redis:8@sha256:97ec88159e6d7cfb5ddef9015386087d58a912de80112f06ebdfa78fa5989901
     restart: unless-stopped
     volumes:
@@ -61,6 +69,9 @@ services:
 
   db:
     container_name: paperless_db
+    cpus: 0.5
+    mem_limit: 512m
+    memswap_limit: 512m
     image: docker.io/library/postgres:17@sha256:b8faeff7712663c2773a190181e1246e37e364b887611c04658c28b44e2408fe
     restart: unless-stopped
     volumes:
@@ -79,6 +90,9 @@ services:
 
   gotenberg:
     container_name: paperless_gotenberg
+    cpus: 0.5
+    mem_limit: 512m
+    memswap_limit: 512m
     image: docker.io/gotenberg/gotenberg:8@sha256:aa552cc115db488e0f0bcb07446aac13071ad51505b642c84bb894500907b42b
     restart: unless-stopped
     # The official Paperless-ngx image expects these chromium flags
@@ -91,6 +105,9 @@ services:
 
   tika:
     container_name: paperless_tika
+    cpus: 0.5
+    mem_limit: 512m
+    memswap_limit: 512m
     # NOTE: pinned to 3.x — Paperless-ngx does not yet support Tika 4
     # (this is the same version paperless-ngx pins in their official compose).
     # Do not merge a Renovate PR bumping this to 4.x until paperless adds support.

@@ -48,6 +48,31 @@
     mode: "0755"
     recurse: yes
   loop: "{{ local_docker_compose.files }}"
+  # Handle Paperless separately so PostgreSQL and Redis retain their permissions.
+  when: item.path | basename != 'paperless'
+
+- name: Find Paperless entries except PostgreSQL and Redis data
+  become: yes
+  find:
+    paths: "{{ docker_deploy_path }}/paperless"
+    file_type: any
+    hidden: true
+    recurse: false
+    excludes:
+      - pgdata
+      - redisdata
+  register: paperless_permission_entries
+  when: "'paperless' in (local_docker_compose.files | map(attribute='path') | map('basename') | list)"
+
+- name: Ensure Paperless permissions except PostgreSQL and Redis data
+  become: yes
+  file:
+    path: "{{ item.path }}"
+    owner: "{{ docker_volume_owner }}"
+    group: "{{ docker_volume_gid }}"
+    mode: "0755"
+    recurse: "{{ item.isdir }}"
+  loop: "{{ paperless_permission_entries.files | default([]) }}"
 
 - name: Ensure acme file exists
   ansible.builtin.stat:
