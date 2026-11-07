@@ -58,6 +58,15 @@ http:
         - websecure
       tls: {}
       service: navidrome-service
+    sure-router:
+      rule: Host(`sure.oscarcorner.com`)
+      entrypoints:
+        - websecure
+      middlewares:
+        - auth@docker
+      tls:
+        certResolver: route53
+      service: sure-service
     cicd-router:
       rule: Host(`cicd.oscarcorner.com`)
       entrypoints:
@@ -111,6 +120,10 @@ http:
       loadBalancer:
         servers:
           - url: http://192.168.1.108:30043
+    sure-service:
+      loadBalancer:
+        servers:
+          - url: http://192.168.1.108:30404
     cicd-service:
       loadBalancer:
         servers:
