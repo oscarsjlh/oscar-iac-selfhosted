@@ -58,6 +58,17 @@ http:
         - websecure
       tls: {}
       service: navidrome-service
+    # MCP uses Sure's Bearer authentication. OAuth clients must also reach
+    # discovery, client registration, and token exchange without Basic Auth.
+    # Keep Basic Auth on the website and browser authorization page.
+    sure-mcp-router:
+      rule: Host(`sure.oscarcorner.com`) && (Path(`/mcp`) || Path(`/.well-known/oauth-protected-resource/mcp`) || Path(`/.well-known/oauth-authorization-server`) || Path(`/register`) || Path(`/oauth/token`))
+      priority: 100
+      entrypoints:
+        - websecure
+      tls:
+        certResolver: route53
+      service: sure-service
     sure-router:
       rule: Host(`sure.oscarcorner.com`)
       entrypoints:
