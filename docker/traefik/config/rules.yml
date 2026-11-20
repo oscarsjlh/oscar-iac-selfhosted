@@ -52,6 +52,13 @@ http:
         - websecure
       tls: {}
       service: jellyfin-service
+    music-router:
+      rule: Host(`music.oscarcorner.com`)
+      entrypoints:
+        - websecure
+      tls: {}
+      service: music-service
+
     navidrome-router:
       rule: Host(`navidrome.oscarcorner.com`)
       entrypoints:
@@ -84,6 +91,7 @@ http:
         - websecure
       tls: {}
       service: cicd-service
+
   middlewares:
     default-headers:
       headers:
@@ -111,6 +119,11 @@ http:
       loadBalancer:
         servers:
           - url: http://192.168.1.108:30142
+    music-service:
+      loadBalancer:
+        servers:
+          - url: http://192.168.1.108:30279
+
     bentopdf-service:
       loadBalancer:
         servers:
