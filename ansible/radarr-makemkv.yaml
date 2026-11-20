@@ -1,0 +1,93 @@
+---
+# Add only the MakeMKV mount. Do not deploy or update unrelated services.
+# Run as the owner of /home/oscar/qbitorrent; no privilege escalation is needed.
+- name: Add the MakeMKV inbox to Radarr
+  hosts: remote
+  gather_facts: false
+  become: false
+  vars:
+    compose_path: /home/oscar/qbitorrent/docker-compose.yaml
+    makemkv_mount: /mnt/makemkv-output:/mnt/makemkv-output
+    desired_compose: "{{ lookup('file', playbook_dir + '/../docker/qbitorrent/docker-compose.yaml') | from_yaml }}"
+  tasks:
+    - name: Check that the repository defines the mount
+      ansible.builtin.assert:
+        that:
+          - makemkv_mount in desired_compose.services.radarr.volumes
+          - "'PGID=568' in desired_compose.services.radarr.environment"
+
+    - name: Check the host inbox
+      ansible.builtin.stat:
+        path: /mnt/makemkv-output
+      register: inbox
+
+    - name: Require an existing inbox directory
+      ansible.builtin.assert:
+        that:
+          - inbox.stat.isdir | default(false)
+
+    - name: Read the deployed Compose file
+      ansible.builtin.slurp:
+        src: "{{ compose_path }}"
+      register: deployed
+
+    - name: Require the expected Radarr config mount
+      ansible.builtin.assert:
+        that:
+          - "'./configs/radarr:/config' in (deployed.content | b64decode | from_yaml).services.radarr.volumes"
+
+    - name: Add the inbox mount to the deployed Radarr service
+      ansible.builtin.lineinfile:
+        path: "{{ compose_path }}"
+        insertafter: '^      - ./configs/radarr:/config$'
+        line: "      - {{ makemkv_mount }}"
+        backup: true
+
+    - name: Remove the supplementary group block (LinuxServer drops these groups)
+      ansible.builtin.blockinfile:
+        path: "{{ compose_path }}"
+        marker: '    # {mark} ANSIBLE MANAGED RADARR MAKEMKV GROUP'
+        state: absent
+        backup: true
+
+    - name: Set only Radarr's primary group to the MakeMKV group
+      ansible.builtin.replace:
+        path: "{{ compose_path }}"
+        regexp: '(    container_name: radarr\n)    environment: \*common-environment'
+        replace: |2
+          \1    environment:
+                - PUID=${PUID}
+                - PGID=568
+                - TZ=${TZ}
+        backup: true
+
+    - name: Validate the Compose file
+      ansible.builtin.command:
+        argv: [docker, compose, -f, "{{ compose_path }}", config, --quiet]
+      changed_when: false
+      when: not ansible_check_mode
+
+    - name: Apply only Radarr without pulling images or starting dependencies
+      ansible.builtin.command:
+        argv: [docker, compose, -f, "{{ compose_path }}", up, -d, --no-deps, --pull, never, radarr]
+      when: not ansible_check_mode
+      register: radarr_up
+      changed_when: "'Recreated' in radarr_up.stderr or 'Started' in radarr_up.stderr"
+
+    - name: Verify inbox and library access as Radarr's application user
+      ansible.builtin.command:
+        argv:
+          - docker
+          - exec
+          - radarr
+          - s6-setuidgid
+          - abc
+          - sh
+          - -ec
+          - 'for path in /mnt/makemkv-output /movies/not-anime; do test -r "$path"; test -w "$path"; test -x "$path"; done'
+      changed_when: false
+      when: not ansible_check_mode
+      register: access_check
+      retries: 10
+      delay: 3
+      until: access_check.rc == 0
