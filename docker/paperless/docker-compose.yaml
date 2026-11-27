@@ -72,7 +72,7 @@ services:
     cpus: 0.5
     mem_limit: 512m
     memswap_limit: 512m
-    image: docker.io/library/postgres:17@sha256:0d938e975177bef9f1f61f3f9dbcf2e0aa0a139568f66d3415ed8892eb97f6ac
+    image: docker.io/library/postgres:19@sha256:4ea94de574c17f0372722806c949757050fbb1cd7648410fe45d6bba275cc00e
     restart: unless-stopped
     volumes:
       - ./pgdata:/var/lib/postgresql/data
@@ -93,7 +93,7 @@ services:
     cpus: 0.5
     mem_limit: 512m
     memswap_limit: 512m
-    image: docker.io/gotenberg/gotenberg:8@sha256:53073e798c8ef39ea2187e44cb67bab77894ea2509100b94c4fe3b461f7b2996
+    image: docker.io/gotenberg/gotenberg:9@sha256:a7726e0f52a4344656031393f0f61fdf35cd28aaf697c7ac3aea9519d72d726e
     restart: unless-stopped
     # The official Paperless-ngx image expects these chromium flags
     command:
